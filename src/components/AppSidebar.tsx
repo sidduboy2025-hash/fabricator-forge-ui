@@ -27,6 +27,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { QuickActionMenu } from "@/components/QuickActionMenu";
 
 import { useRole, Role } from "@/contexts/RoleContext";
 
@@ -101,6 +102,27 @@ export function AppSidebar() {
               <SidebarMenu>
                 {group.items.map((item) => {
                   const isActive = item.url === "/" ? location.pathname === "/" : location.pathname.startsWith(item.url);
+                  
+                  if (item.title === "Action") {
+                    return (
+                      <QuickActionMenu key={item.title}>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton asChild>
+                            <button
+                              className={cn(
+                                "flex items-center gap-2.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors w-full cursor-pointer",
+                                "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                              )}
+                            >
+                              <item.icon className="h-4 w-4 shrink-0" />
+                              {!collapsed && <span>{item.title}</span>}
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </QuickActionMenu>
+                    );
+                  }
+
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
