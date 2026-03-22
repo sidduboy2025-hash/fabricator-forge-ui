@@ -1,0 +1,319 @@
+```text id="fabricator-ui-93821"
+Build a professional, enterprise-grade, UI-only SaaS web application for a “Fabricator Management Platform”. This is a B2B system used by fabricators, traders, and distributors for managing projects, inventory, pricing, billing, and operations.
+
+Important:
+- UI only. No backend, no real APIs, no integrations.
+- Use realistic mock data and simulate states.
+- The product should feel like a serious SaaS platform with monetization and operational depth.
+- Prioritize clarity, scalability, and business usability.
+- This is not a simple CRUD app — it should feel like a production SaaS tool.
+
+Design style:
+- Clean, modern enterprise SaaS dashboard (similar to ERP/Fintech tools)
+- Neutral background, strong typography, subtle borders
+- Clear spacing, grid system, and visual hierarchy
+- Use restrained color system with semantic colors for states
+- Highly readable tables and dense data views
+- Professional, not flashy
+
+App structure:
+- Left sidebar navigation
+- Top header with search, org switcher, notifications, profile, wallet balance
+- Main content area with cards, tables, charts, drawers, and modals
+
+Sidebar navigation:
+- Dashboard
+- Projects
+- Inventory
+- Pricing Engine
+- Billing & Wallet
+- Payments
+- Supply Chain
+- OCR Uploads
+- Reports (CA / GST)
+- Batch Processing
+- Admin Panel
+- Settings
+
+-------------------------------------
+1) Dashboard (Business Overview)
+-------------------------------------
+Show a high-level operational + SaaS overview.
+
+Sections:
+- KPI cards:
+  - Total SFT processed
+  - Wallet balance
+  - Revenue generated
+  - Pending invoices
+  - Low stock alerts
+  - Active projects
+- Usage meter (SFT consumption vs credits)
+- Revenue graph (SaaS earnings)
+- Inventory alerts panel
+- Recent activity timeline
+- Pending payments widget
+- Supply chain activity snapshot
+
+-------------------------------------
+2) Projects (Core Fabrication Flow)
+-------------------------------------
+Main working area for fabricators.
+
+Include:
+- Project list table:
+  - Project name
+  - Client
+  - Total SFT
+  - Status
+  - Cost estimate
+  - Progress
+- Project detail screen:
+  - Drawings / measurements section
+  - BOM (Bill of Materials)
+  - Cost breakdown
+  - Pricing applied
+  - Linked invoices
+- BOM section:
+  - Profiles
+  - Glass
+  - Hardware
+  - Quantities
+- Auto-cost calculation preview (UI only)
+- “Process Project” action that shows:
+  - SFT usage deduction (mock)
+  - Cost estimation
+
+-------------------------------------
+3) Inventory Management
+-------------------------------------
+Critical operational module.
+
+Include:
+- Stock overview cards:
+  - Profiles
+  - Glass
+  - Hardware
+- Inventory table:
+  - Item name
+  - Category
+  - Quantity
+  - Unit
+  - Warehouse/location
+  - Status (In stock / Low / Out)
+- Stock in/out UI:
+  - Add stock
+  - Remove stock
+- Alerts:
+  - Low stock warnings
+- Multi-level visibility toggle:
+  - Fabricator / Distributor / Trader
+- BOM auto-deduction preview panel (simulate deduction when project is processed)
+
+-------------------------------------
+4) Pricing Engine
+-------------------------------------
+Flexible pricing configuration UI.
+
+Include:
+- Region-based pricing rules
+- Customer-type pricing (Retail / Contractor / Bulk)
+- Rule builder UI:
+  - Conditions (region, material, customer type)
+  - Outputs (price per SFT, margin, markup)
+- Pricing preview panel:
+  - Show calculated price based on rules
+- Rule list table with edit/delete
+
+-------------------------------------
+5) Billing & Wallet (SaaS Monetization)
+-------------------------------------
+Core SaaS business module.
+
+Include:
+- Wallet balance card
+- Credit purchase UI (mock)
+- Usage deduction history:
+  - SFT used
+  - Credits deducted
+  - Date/time
+- Pricing controls (Admin view):
+  - Price per SFT
+  - Discount tiers
+- Revenue summary:
+  - Daily / monthly revenue
+- Transaction history table
+
+-------------------------------------
+6) Payments (Operational Finance)
+-------------------------------------
+Track payments and invoices.
+
+Include:
+- Invoice table:
+  - Invoice ID
+  - Client
+  - Amount
+  - Status (Paid / Pending / Overdue)
+  - Due date
+- Payment recording modal:
+  - Amount
+  - Mode
+  - Date
+- Outstanding summary cards
+- Payment timeline per client
+
+-------------------------------------
+7) Supply Chain Integration
+-------------------------------------
+Visualize ecosystem relationships.
+
+Include:
+- Network view:
+  - Trader → Distributor → Fabricator
+- Data visibility controls:
+  - What data is shared upstream/downstream
+- Linked entities panel:
+  - Connected traders/distributors
+- Sync status indicators (mock)
+
+-------------------------------------
+8) OCR / AI Uploads
+-------------------------------------
+Smart input module.
+
+Include:
+- Upload area:
+  - Image / PDF drag-and-drop
+- File preview panel
+- OCR extraction preview:
+  - Measurements
+  - Material detection
+- AI suggestion panel (mock):
+  - Suggested dimensions
+  - Detected components
+- Validation UI:
+  - Highlight errors
+  - Allow manual correction
+
+-------------------------------------
+9) Reports (CA / GST)
+-------------------------------------
+Structured financial reports.
+
+Include:
+- GST summary cards
+- Report filters:
+  - Date range
+  - Client
+  - Project
+- Export UI:
+  - Excel
+  - PDF
+- Table preview of reports
+- Structured format layout (accounting-friendly)
+
+-------------------------------------
+10) Batch Processing
+-------------------------------------
+Optimization for multiple projects.
+
+Include:
+- Project selection table
+- Batch processing panel:
+  - Combined material usage
+  - Cost optimization preview
+- Summary:
+  - Total SFT
+  - Total cost
+  - Savings (mock)
+
+-------------------------------------
+11) Admin Panel
+-------------------------------------
+For SaaS owner/operator.
+
+Include:
+- Revenue metrics:
+  - Total revenue
+  - Active users
+  - ARPU
+- Usage analytics:
+  - SFT processed
+  - Credit consumption
+- Pricing control panel
+- System health overview
+
+-------------------------------------
+12) Offline Mode (UI Simulation)
+-------------------------------------
+Include:
+- Offline indicator badge
+- “Working offline” banner
+- Sync queue panel:
+  - Pending actions
+  - Sync status
+- Manual sync button
+
+-------------------------------------
+13) Multi-language Support (UI only)
+-------------------------------------
+Include:
+- Language switcher (English / Telugu / Hindi)
+- UI should demonstrate:
+  - Text switching (mock)
+  - Icon-supported navigation
+
+-------------------------------------
+Key UI behaviors:
+- Clear state indicators everywhere:
+  - Active / Completed / Pending / Error
+- Use badges, chips, and labels consistently
+- Tables must support:
+  - Sorting
+  - Filtering
+  - Search
+- Use modals and side drawers for actions (edit, add, process)
+- Use stepper or workflow indicators where needed
+
+-------------------------------------
+Data (mock structure examples):
+-------------------------------------
+Projects:
+- id, name, client, sft, status, cost, created_at
+
+Inventory:
+- id, item_name, category, quantity, unit, location, status
+
+Wallet:
+- balance, credits_used, credits_added, transactions
+
+Invoices:
+- id, client, amount, status, due_date, paid_date
+
+Pricing rules:
+- id, region, customer_type, material, price_per_sft
+
+OCR files:
+- id, file_url, extracted_data, validation_status
+
+-------------------------------------
+Technical preferences:
+- React-style component architecture
+- Reusable UI components
+- Mock JSON data
+- No backend logic
+- Focus on layout, UX, and system clarity
+
+-------------------------------------
+Final goal:
+-------------------------------------
+A polished, scalable, SaaS-grade UI that clearly represents:
+- Monetization (wallet + SFT billing)
+- Operations (projects + inventory)
+- Intelligence (OCR + pricing)
+- Finance (payments + reports)
+- Ecosystem (supply chain)
+
+The UI should feel like a real product that could be shipped after backend integration.
+```

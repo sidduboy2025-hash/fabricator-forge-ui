@@ -13,6 +13,7 @@ import {
 import { Bell, ChevronDown, Globe, Search, User, Wallet } from "lucide-react";
 import { CurrencyDisplay } from "@/components/CurrencyDisplay";
 import { walletBalance } from "@/data/wallet";
+import { useRole, Role } from "@/contexts/RoleContext";
 
 const orgs = [
   { id: "1", name: "Acme Fabricators", role: "Owner" },
@@ -33,6 +34,7 @@ export function AppHeader() {
   const [currentLang, setCurrentLang] = useState("EN");
   const [isOffline] = useState(false);
   const unreadCount = notifications.filter((n) => n.unread).length;
+  const { role, setRole } = useRole();
 
   return (
     <header className="flex h-12 items-center justify-between border-b bg-card px-3 gap-3">
@@ -66,42 +68,60 @@ export function AppHeader() {
         <Input placeholder="Search projects, invoices, inventory..." className="h-7 pl-8 text-xs" />
       </div>
 
-      <div className="flex items-center gap-1">
-        {/* Offline indicator */}
-        <div className="flex items-center gap-1 mr-1">
-          <div className={`h-1.5 w-1.5 rounded-full ${isOffline ? "bg-destructive" : "bg-success"}`} />
-          {isOffline && <span className="text-2xs text-destructive">Offline</span>}
+      <div className="flex items-center gap-1 sm:gap-2">
+        <div className="hidden sm:flex items-center gap-1">
+          {/* Offline indicator */}
+          <div className="flex items-center gap-1 mr-1">
+            <div className={`h-1.5 w-1.5 rounded-full ${isOffline ? "bg-destructive" : "bg-success"}`} />
+            {isOffline && <span className="text-2xs text-destructive">Offline</span>}
+          </div>
+
+          {/* Language */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Globe className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {["EN", "తెలుగు", "हिंदी"].map((lang) => (
+                <DropdownMenuItem key={lang} onClick={() => setCurrentLang(lang)} className="text-xs">
+                  {lang} {currentLang === lang && "✓"}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Role Switcher (Debug) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-7 text-xs border-dashed text-primary">
+                Role: {role}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {(["DISTRIBUTOR", "FABRICATOR", "ADMIN"] as Role[]).map((r) => (
+                <DropdownMenuItem key={r} onClick={() => setRole(r)} className="text-xs">
+                  {r} {role === r && "✓"}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Wallet */}
+          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs font-medium">
+            <Wallet className="h-3.5 w-3.5" />
+            <CurrencyDisplay amount={walletBalance} compact />
+          </Button>
         </div>
-
-        {/* Language */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-7 w-7">
-              <Globe className="h-3.5 w-3.5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {["EN", "తెలుగు", "हिंदी"].map((lang) => (
-              <DropdownMenuItem key={lang} onClick={() => setCurrentLang(lang)} className="text-xs">
-                {lang} {currentLang === lang && "✓"}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Wallet */}
-        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs font-medium">
-          <Wallet className="h-3.5 w-3.5" />
-          <CurrencyDisplay amount={walletBalance} compact />
-        </Button>
 
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-7 w-7 relative">
-              <Bell className="h-3.5 w-3.5" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 relative">
+              <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground">
+                <span className="absolute right-0.5 top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground">
                   {unreadCount}
                 </span>
               )}
@@ -124,27 +144,29 @@ export function AppHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Profile */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-7 w-7">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                RK
-              </div>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel className="font-normal">
-              <div className="text-sm font-medium">Ravi Kumar</div>
-              <div className="text-2xs text-muted-foreground">ravi@acmefab.com</div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-xs">Profile</DropdownMenuItem>
-            <DropdownMenuItem className="text-xs">Preferences</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-xs text-destructive">Log out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Profile (Hidden on Mobile) */}
+        <div className="hidden sm:block">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                  RK
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel className="font-normal">
+                <div className="text-sm font-medium">Ravi Kumar</div>
+                <div className="text-2xs text-muted-foreground">ravi@acmefab.com</div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-xs">Profile</DropdownMenuItem>
+              <DropdownMenuItem className="text-xs">Preferences</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-xs text-destructive">Log out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </header>
   );

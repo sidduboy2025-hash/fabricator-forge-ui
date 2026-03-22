@@ -10,7 +10,7 @@ import {
   FileText,
   Layers,
   ShieldCheck,
-  Settings,
+  PlusCircle,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -28,27 +28,37 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
-const navGroups = [
+import { useRole, Role } from "@/contexts/RoleContext";
+
+const getNavGroups = (role: Role) => [
+  {
+    label: "Main Navigation",
+    items: [
+      { title: "Home", url: "/", icon: LayoutDashboard },
+      { title: "Projects", url: "/projects", icon: FolderKanban },
+      { title: "Action", url: "/new-action", icon: PlusCircle },
+      { title: "Invoices", url: "/quotations", icon: FileText },
+      { title: "Accounts", url: "/billing", icon: Wallet },
+    ],
+  },
   {
     label: "Operations",
     items: [
-      { title: "Dashboard", url: "/", icon: LayoutDashboard },
-      { title: "Projects", url: "/projects", icon: FolderKanban },
       { title: "Inventory", url: "/inventory", icon: Package },
+      ...(role === "DISTRIBUTOR" || role === "ADMIN" ? [{ title: "Fabricators", url: "/fabricators", icon: Network }] : []),
     ],
   },
   {
     label: "Business",
     items: [
       { title: "Pricing Engine", url: "/pricing", icon: Calculator },
-      { title: "Billing & Wallet", url: "/billing", icon: Wallet },
       { title: "Payments", url: "/payments", icon: CreditCard },
     ],
   },
   {
     label: "Intelligence",
     items: [
-      { title: "OCR Uploads", url: "/ocr", icon: ScanLine },
+      { title: "OCR / AI Input", url: "/ocr", icon: ScanLine },
       { title: "Reports", url: "/reports", icon: FileText },
       { title: "Batch Processing", url: "/batch", icon: Layers },
     ],
@@ -58,7 +68,6 @@ const navGroups = [
     items: [
       { title: "Supply Chain", url: "/supply-chain", icon: Network },
       { title: "Admin Panel", url: "/admin", icon: ShieldCheck },
-      { title: "Settings", url: "/settings", icon: Settings },
     ],
   },
 ];
@@ -67,6 +76,8 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const { role } = useRole();
+  const navGroups = getNavGroups(role);
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">

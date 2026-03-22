@@ -1,0 +1,762 @@
+Based on the provided spec, here is a structured execution plan for the Fabricator Management Platform 
+
+```text
+FABRICATOR MANAGEMENT PLATFORM
+UI-ONLY SaaS APPLICATION — EXECUTION PLAN
+
+1) FULL CONTEXT / PRODUCT DEFINITION
+
+1.1 Product Objective
+- Build a professional, enterprise-grade, UI-only SaaS web application for fabricators, traders, and distributors.
+- The platform should feel like a real operational business tool, not a demo dashboard or a simple CRUD app.
+- It must simulate monetization, operations, intelligence, finance, and ecosystem management using mock data only.
+- No backend, no real APIs, no third-party integrations.
+- The UI should be production-like, scalable, and ready to be connected to backend services later.
+
+1.2 Primary Business Purpose
+- Manage fabrication projects from intake to processing.
+- Track and simulate inventory movement and consumption.
+- Apply pricing rules dynamically based on region/customer/material.
+- Show SaaS monetization through wallet, SFT billing, and credit deduction.
+- Track invoices, payments, reports, and operational finance.
+- Visualize supply chain relationships.
+- Support OCR-based document intake and AI-assisted extraction.
+- Provide admin controls for pricing, usage, and system health.
+- Support offline mode and multilingual UI.
+
+1.3 Product Positioning
+- This is a serious B2B SaaS platform for operational teams.
+- It should look like a mix of ERP, fintech dashboard, and industrial operations software.
+- Visual tone: neutral, dense, clean, structured, high-trust, business-first.
+- The experience must be clear enough for real-world users such as owners, operators, finance teams, and warehouse managers.
+
+1.4 Core Navigation Structure
+- Dashboard
+- Projects
+- Inventory
+- Pricing Engine
+- Billing & Wallet
+- Payments
+- Supply Chain
+- OCR Uploads
+- Reports (CA / GST)
+- Batch Processing
+- Admin Panel
+- Settings
+
+1.5 Global UI Expectations
+- Left sidebar navigation
+- Top header with:
+  - search
+  - organization switcher
+  - notifications
+  - profile
+  - wallet balance
+- Main content area with:
+  - cards
+  - tables
+  - charts
+  - drawers
+  - modals
+- Strong spacing and grid discipline
+- Dense but readable enterprise tables
+- Semantic colors for statuses
+- Reusable UI components
+- Mock JSON data
+- Clear state indicators everywhere
+- Sorting, filtering, and search in tables
+- Modals and side drawers for create/edit/process actions
+- Stepper/workflow indicators where relevant
+
+1.6 Key Domain Data Objects
+- Projects: id, name, client, sft, status, cost, created_at
+- Inventory: id, item_name, category, quantity, unit, location, status
+- Wallet: balance, credits_used, credits_added, transactions
+- Invoices: id, client, amount, status, due_date, paid_date
+- Pricing rules: id, region, customer_type, material, price_per_sft
+- OCR files: id, file_url, extracted_data, validation_status
+
+1.7 Business Capabilities to Simulate
+- SFT billing and deduction
+- Inventory consumption based on BOM processing
+- Pricing calculation based on rule engine
+- Invoice generation and payment tracking
+- Revenue and credit purchase simulation
+- Batch optimization preview
+- OCR extraction and manual validation
+- Offline action queue and sync behavior
+- Language switching with visible UI text variation
+
+2) POINT-WISE EXECUTION PLAN
+
+PHASE 1 — PRODUCT FOUNDATION
+
+2.1 Set up the application shell
+- Build the overall layout first:
+  - sidebar
+  - topbar
+  - content container
+  - responsive behavior
+- Create the base navigation system.
+- Establish the app frame that all modules will share.
+- Add workspace patterns for:
+  - full page views
+  - nested detail screens
+  - drawers
+  - dialogs
+  - empty states
+
+2.2 Define the visual system
+- Establish typography scale.
+- Define spacing rules and layout rhythm.
+- Create a restrained color system:
+  - primary
+  - secondary
+  - success
+  - warning
+  - danger
+  - info
+  - neutral
+- Define status badge styles:
+  - active
+  - completed
+  - pending
+  - error
+  - overdue
+  - low stock
+- Standardize surface styles:
+  - cards
+  - tables
+  - panels
+  - modals
+  - side drawers
+
+2.3 Create reusable UI components
+- Button
+- Input
+- Select
+- Badge
+- Tag / Chip
+- Table
+- Pagination
+- Tabs
+- Drawer
+- Modal
+- Toast
+- Timeline
+- Stepper
+- Metric card
+- Chart wrapper
+- Search bar
+- Filter bar
+- Empty state
+- Loading skeleton
+- File upload zone
+- Status indicator
+- Currency display
+- Progress bar
+- Notification item
+
+2.4 Establish mock data architecture
+- Create realistic JSON datasets for:
+  - projects
+  - inventory
+  - pricing rules
+  - invoices
+  - payments
+  - wallet transactions
+  - OCR files
+  - supply chain entities
+  - activity logs
+  - admin metrics
+- Ensure mock data includes:
+  - normal cases
+  - edge cases
+  - low stock
+  - overdue payments
+  - completed projects
+  - pending OCR validations
+  - offline pending actions
+
+PHASE 2 — GLOBAL APPLICATION EXPERIENCE
+
+2.5 Implement the top header
+- Search input with global search behavior.
+- Organization switcher with multi-org feel.
+- Notification bell with unread state.
+- Wallet balance display.
+- Profile menu.
+- Language selector.
+- Offline status badge.
+
+2.6 Implement the sidebar navigation
+- Add all modules in the correct hierarchy.
+- Use clear labels and icons.
+- Include active route highlighting.
+- Support collapsed and expanded states.
+- Keep the sidebar enterprise-like, not decorative.
+
+2.7 Add global system states
+- Offline banner
+- Sync pending banner
+- Error toast pattern
+- Warning banner
+- Success confirmation
+- Permission / admin state styling
+- Empty data states
+- Search no-result states
+
+2.8 Establish table behavior standards
+- Sorting
+- Filtering
+- Global search
+- Column visibility
+- Row actions
+- Pagination or infinite scroll where needed
+- Multi-select actions for batch operations
+
+PHASE 3 — DASHBOARD MODULE
+
+2.9 Build the dashboard overview
+- Show a high-level operational summary.
+- Structure it like a serious SaaS control center.
+
+2.10 Add KPI cards
+- Total SFT processed
+- Wallet balance
+- Revenue generated
+- Pending invoices
+- Low stock alerts
+- Active projects
+
+2.11 Add usage meter
+- Show SFT consumption versus available credits.
+- Present progress clearly with thresholds.
+- Add warning states for nearing limit.
+
+2.12 Add revenue graph
+- Show simulated SaaS earnings over time.
+- Include daily / weekly / monthly switch.
+- Add trend comparison.
+
+2.13 Add inventory alerts panel
+- Display low stock items.
+- Show item name, category, and severity.
+- Allow quick access to inventory detail.
+
+2.14 Add recent activity timeline
+- Show recent actions like:
+  - project created
+  - inventory adjusted
+  - invoice paid
+  - OCR uploaded
+  - pricing rule updated
+- Present timestamps and state markers.
+
+2.15 Add pending payments widget
+- Show overdue and pending invoice counts.
+- Highlight financial risk clearly.
+
+2.16 Add supply chain activity snapshot
+- Show partner sync status.
+- Show upstream/downstream activity.
+- Show recent changes in relationship data.
+
+PHASE 4 — PROJECTS MODULE
+
+2.17 Build the project list page
+- Create a dense table with:
+  - project name
+  - client
+  - total SFT
+  - status
+  - cost estimate
+  - progress
+- Add filters by:
+  - status
+  - client
+  - date
+  - project type
+- Add row actions:
+  - view
+  - edit
+  - process
+  - duplicate
+  - archive
+
+2.18 Build project detail screen
+- Add a master-detail layout.
+- Show project metadata at top.
+- Include tabs or sections for:
+  - drawings / measurements
+  - BOM
+  - cost breakdown
+  - pricing applied
+  - invoices
+  - activity log
+
+2.19 Build drawings / measurements section
+- Display structured measurements.
+- Use annotated cards or technical table views.
+- Highlight key inputs needed for fabrication.
+
+2.20 Build BOM section
+- Include:
+  - profiles
+  - glass
+  - hardware
+  - quantities
+- Show consumption mapping from project to material requirements.
+- Support preview mode before processing.
+
+2.21 Build cost breakdown
+- Split cost into:
+  - materials
+  - labor
+  - overhead
+  - margin
+  - taxes
+- Show subtotal and final estimate.
+- Keep the display transparent and audit-friendly.
+
+2.22 Build pricing applied section
+- Show which pricing rule was applied.
+- Show region/customer/material match.
+- Explain the price logic in a visible UI way.
+
+2.23 Build linked invoices section
+- Show invoice linkage to the project.
+- Include invoice status and due date.
+- Allow navigation to payment module.
+
+2.24 Add process project action
+- Create a workflow modal or drawer.
+- Simulate:
+  - SFT usage deduction
+  - inventory deduction preview
+  - cost estimation
+  - final confirmation
+- Show before/after state.
+- Make the business logic visible in the UI.
+
+PHASE 5 — INVENTORY MODULE
+
+2.25 Build inventory overview cards
+- Profiles
+- Glass
+- Hardware
+- Show stock quantity and alert states.
+
+2.26 Build inventory table
+- Include:
+  - item name
+  - category
+  - quantity
+  - unit
+  - warehouse/location
+  - status
+- Use clear visual severity for:
+  - in stock
+  - low
+  - out
+- Support filters by category, location, and status.
+
+2.27 Build stock in / stock out UI
+- Add stock adjustment flow.
+- Include quantity, reason, source, and location.
+- Simulate add stock and remove stock actions.
+
+2.28 Build low stock warning system
+- Show alert cards and inline indicators.
+- Surface urgent items first.
+- Make action buttons available for reorder or stock correction.
+
+2.29 Build multi-level visibility toggle
+- Allow switching visibility modes:
+  - fabricator
+  - distributor
+  - trader
+- Change what the user sees based on the selected level.
+- Keep this as a UI simulation only.
+
+2.30 Build BOM auto-deduction preview panel
+- Show what inventory will be consumed when a project is processed.
+- Display item-by-item deductions.
+- Show estimated remaining quantity after processing.
+
+PHASE 6 — PRICING ENGINE MODULE
+
+2.31 Build pricing rule management screen
+- Present a list of pricing rules.
+- Show:
+  - region
+  - customer type
+  - material
+  - price per SFT
+  - margin
+  - markup
+- Allow edit / delete actions from row controls.
+
+2.32 Build rule builder UI
+- Create a structured condition builder.
+- Allow conditions for:
+  - region
+  - material
+  - customer type
+- Allow output definitions:
+  - price per SFT
+  - margin
+  - markup
+
+2.33 Build pricing preview panel
+- Show the resulting calculated price.
+- Indicate which rules matched.
+- Display rule priority and fallback logic visually.
+
+2.34 Support multiple pricing strategies
+- Region-based pricing
+- Customer-type pricing
+- Bulk pricing
+- Material-specific pricing
+- Add priority handling UI.
+
+PHASE 7 — BILLING & WALLET MODULE
+
+2.35 Build wallet balance section
+- Show current balance prominently.
+- Show available credits.
+- Show recent usage.
+- Show replenishment state.
+
+2.36 Build credit purchase UI
+- Allow mock purchase flow.
+- Simulate package selection.
+- Show transaction confirmation state.
+
+2.37 Build usage deduction history
+- Show:
+  - SFT used
+  - credits deducted
+  - date/time
+- Make the audit trail easy to scan.
+- Include filters by date and usage type.
+
+2.38 Build pricing controls for admin view
+- Show editable price per SFT.
+- Show discount tiers.
+- Make it obvious this is an operator/admin control area.
+
+2.39 Build revenue summary
+- Daily revenue
+- Monthly revenue
+- Trend comparison
+- Show relative growth or decline.
+
+2.40 Build transaction history table
+- Include transaction type, amount, reference, date, and status.
+- Support export-like UI actions, even if mocked.
+
+PHASE 8 — PAYMENTS MODULE
+
+2.41 Build invoice management table
+- Include:
+  - invoice ID
+  - client
+  - amount
+  - status
+  - due date
+- Use strong status colors.
+- Make overdue invoices highly visible.
+
+2.42 Build payment recording modal
+- Include:
+  - amount
+  - payment mode
+  - date
+- Simulate recording a payment for a selected invoice.
+
+2.43 Build outstanding summary cards
+- Pending total
+- Overdue total
+- Paid total
+- Client exposure
+
+2.44 Build payment timeline per client
+- Show invoice creation, reminders, partial payments, and closure.
+- Present a chronological financial story for each client.
+
+PHASE 9 — SUPPLY CHAIN MODULE
+
+2.45 Build network relationship view
+- Visualize:
+  - trader → distributor → fabricator
+- Show relationship chains clearly.
+- Keep it clean and understandable.
+
+2.46 Build data visibility controls
+- Let users define what data is shared upstream/downstream.
+- Show toggles for:
+  - inventory visibility
+  - project visibility
+  - payment visibility
+  - sync visibility
+
+2.47 Build linked entities panel
+- Show connected traders and distributors.
+- Include status, sync health, and relationship labels.
+
+2.48 Build sync status indicators
+- Connected
+- Pending
+- Failed
+- Partial sync
+- Last updated timestamp
+
+PHASE 10 — OCR / AI UPLOADS MODULE
+
+2.49 Build file upload area
+- Support image and PDF drag-and-drop UI.
+- Show upload instructions and supported file hints.
+- Simulate file drop, upload progress, and completion.
+
+2.50 Build file preview panel
+- Display uploaded document preview.
+- Show file metadata.
+- Allow switching between uploaded files.
+
+2.51 Build OCR extraction preview
+- Show extracted measurements.
+- Show material detection results.
+- Highlight confidence and possible inaccuracies.
+
+2.52 Build AI suggestion panel
+- Display:
+  - suggested dimensions
+  - detected components
+  - inferred values
+- Keep it obviously simulated, but convincing.
+
+2.53 Build validation interface
+- Highlight errors.
+- Allow manual corrections.
+- Mark validated vs unresolved fields.
+- Add accept/reject flow for extracted values.
+
+PHASE 11 — REPORTS (CA / GST) MODULE
+
+2.54 Build GST summary cards
+- Total taxable value
+- GST collected
+- Pending tax items
+- Filing-ready state
+
+2.55 Build report filters
+- Date range
+- Client
+- Project
+- Status
+
+2.56 Build export actions
+- Excel export UI
+- PDF export UI
+- Make these look like real business actions even if mocked.
+
+2.57 Build structured report table
+- Accounting-friendly layout.
+- Dense rows.
+- Clear numeric formatting.
+- Strong alignment and subtotal logic.
+
+PHASE 12 — BATCH PROCESSING MODULE
+
+2.58 Build project selection table
+- Allow selecting multiple projects.
+- Show batch eligibility.
+- Use checkboxes and grouped actions.
+
+2.59 Build batch processing panel
+- Show combined material usage.
+- Show cost optimization preview.
+- Show possible efficiency gains.
+
+2.60 Build batch summary cards
+- Total SFT
+- Total cost
+- Savings
+- Count of projects in batch
+
+2.61 Support batch confirmation flow
+- Add preview before execution.
+- Show what changes will occur.
+- Display result after simulated processing.
+
+PHASE 13 — ADMIN PANEL
+
+2.62 Build admin KPI section
+- Total revenue
+- Active users
+- ARPU
+- Usage volume
+- Credit consumption
+
+2.63 Build usage analytics
+- Show SFT processed over time.
+- Show credit usage trends.
+- Add segmentation views if needed.
+
+2.64 Build pricing control panel
+- Admin-level price controls.
+- Discount tiers.
+- Global pricing overrides.
+- Make admin authority visually distinct.
+
+2.65 Build system health overview
+- Sync status
+- Module health
+- Error count
+- Queue status
+- Offline events
+
+PHASE 14 — OFFLINE MODE SIMULATION
+
+2.66 Build offline indicator
+- Show clear offline badge.
+- Add a working-offline banner.
+- Make the state impossible to miss.
+
+2.67 Build sync queue panel
+- Show pending actions.
+- Show sync order.
+- Show status per queued item.
+
+2.68 Build manual sync button
+- Trigger mock synchronization.
+- Show completed / failed sync states.
+- Keep the experience realistic.
+
+PHASE 15 — MULTI-LANGUAGE SUPPORT
+
+2.69 Build language switcher
+- English
+- Telugu
+- Hindi
+
+2.70 Simulate translated UI text
+- Switch visible labels and navigation text.
+- Keep iconography constant.
+- Demonstrate the app can support multiple business-user languages.
+
+2.71 Ensure layout stability across languages
+- Verify longer/shorter labels do not break the UI.
+- Maintain spacing and component integrity.
+
+PHASE 16 — POLISH, QUALITY, AND REALISM
+
+2.72 Improve all loading states
+- Skeletons
+- Spinners
+- Placeholder cards
+- Table loading states
+
+2.73 Improve all empty states
+- No projects
+- No inventory
+- No invoices
+- No OCR files
+- No reports available
+
+2.74 Improve all error states
+- Validation failure
+- Sync failure
+- Out of stock
+- Overdue payments
+- Missing OCR fields
+
+2.75 Add UX micro-interactions
+- Hover states
+- Row highlights
+- Drawer transitions
+- Badge updates
+- Confirmation feedback
+
+2.76 Ensure consistency across modules
+- Same spacing rhythm
+- Same color semantics
+- Same table patterns
+- Same action patterns
+- Same badge language
+
+2.77 Make the system feel real
+- Use realistic names, numbers, dates, and statuses.
+- Avoid placeholder-looking junk.
+- Keep every screen business-credible.
+
+3) IMPLEMENTATION ORDER / PRIORITY
+
+3.1 Build first
+- App shell
+- Navigation
+- Design system
+- Mock data
+- Shared components
+
+3.2 Build next
+- Dashboard
+- Projects
+- Inventory
+- Pricing Engine
+
+3.3 Then build business operations
+- Billing & Wallet
+- Payments
+- Supply Chain
+- OCR Uploads
+
+3.4 Then build reporting and scale features
+- Reports
+- Batch Processing
+- Admin Panel
+- Offline mode
+- Multi-language support
+
+3.5 Final pass
+- Polish
+- responsiveness
+- edge states
+- visual consistency
+- interaction quality
+
+4) ACCEPTANCE CRITERIA
+
+4.1 The UI must feel enterprise-grade
+- Not toy-like.
+- Not overly decorative.
+- Not visually noisy.
+- Not empty or generic.
+
+4.2 The app must clearly communicate
+- monetization
+- operations
+- finance
+- intelligence
+- ecosystem connectivity
+
+4.3 Every major module must have
+- a main view
+- detail view or drilldown
+- state indicators
+- mock data
+- action patterns
+
+4.4 The product must be shippable in structure
+- If backend is added later, the UI should already be logically organized for integration.
+
+5) FINAL OUTCOME
+
+- A polished SaaS-grade Fabricator Management Platform UI.
+- Clear operational depth.
+- Strong financial and billing visibility.
+- Serious enterprise UX.
+- Mocked but believable workflows.
+- Ready for backend integration later without redesigning the core structure.
+```

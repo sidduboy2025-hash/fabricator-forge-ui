@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
+import { RoleProvider } from "@/contexts/RoleContext";
 import DashboardPage from "./pages/DashboardPage";
 import ProjectsPage from "./pages/ProjectsPage";
 import InventoryPage from "./pages/InventoryPage";
@@ -15,20 +16,24 @@ import OcrPage from "./pages/OcrPage";
 import ReportsPage from "./pages/ReportsPage";
 import BatchPage from "./pages/BatchPage";
 import AdminPage from "./pages/AdminPage";
-import SettingsPage from "./pages/SettingsPage";
+import FabricatorsPage from "./pages/FabricatorsPage";
+import QuotationsPage from "./pages/QuotationsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+    <RoleProvider>
+      <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <AppLayout>
           <Routes>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/fabricators" element={<FabricatorsPage />} />
+            <Route path="/quotations" element={<QuotationsPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/inventory" element={<InventoryPage />} />
             <Route path="/pricing" element={<PricingPage />} />
@@ -39,12 +44,12 @@ const App = () => (
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/batch" element={<BatchPage />} />
             <Route path="/admin" element={<AdminPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
       </BrowserRouter>
     </TooltipProvider>
+    </RoleProvider>
   </QueryClientProvider>
 );
 

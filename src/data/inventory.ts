@@ -42,3 +42,31 @@ export const inventory: InventoryItem[] = [
   { id: "INV-029", itemName: "Powder Coat Profile 50mm", category: "profiles", quantity: 950, unit: "meters", location: "Warehouse B", status: "in-stock", minStock: 200, lastUpdated: "2026-03-18" },
   { id: "INV-030", itemName: "Spider Fitting 4-Way", category: "hardware", quantity: 28, unit: "pieces", location: "Hardware Bay", status: "in-stock", minStock: 10, lastUpdated: "2026-03-17" },
 ];
+
+export interface StockOperation {
+  id: string;
+  itemId: string;
+  itemName: string;
+  type: "in" | "out" | "bom-deduction";
+  quantity: number;
+  date: string;
+  reference?: string;
+}
+
+export const stockOperationsLog: StockOperation[] = [
+  { id: "OP-1001", itemId: "INV-001", itemName: "Aluminium Profile 60mm", type: "in", quantity: 500, date: "2026-03-22T09:15:00", reference: "PO-4412" },
+  { id: "OP-1002", itemId: "INV-005", itemName: "Corner Profile 90°", type: "bom-deduction", quantity: -120, date: "2026-03-21T14:30:00", reference: "PRJ-014 (BOM-882)" },
+  { id: "OP-1003", itemId: "INV-012", itemName: "DGU 6+12+6 Clear", type: "out", quantity: -45, date: "2026-03-20T11:00:00", reference: "Manual Dispatch" },
+  { id: "OP-1004", itemId: "INV-018", itemName: "Sliding Roller Heavy Duty", type: "bom-deduction", quantity: -24, date: "2026-03-19T16:20:00", reference: "PRJ-009 (BOM-715)" },
+  { id: "OP-1005", itemId: "INV-021", itemName: "Silicone Sealant (Black)", type: "bom-deduction", quantity: -15, date: "2026-03-18T10:45:00", reference: "PRJ-009 (BOM-715)" },
+  { id: "OP-1006", itemId: "INV-008", itemName: "Float Glass 5mm Clear", type: "in", quantity: 1000, date: "2026-03-15T08:30:00", reference: "PO-4390" },
+];
+
+export const stockAlerts = [
+  { month: "Oct", lowStockEvents: 12, outOfStockEvents: 2 },
+  { month: "Nov", lowStockEvents: 8, outOfStockEvents: 1 },
+  { month: "Dec", lowStockEvents: 15, outOfStockEvents: 4 },
+  { month: "Jan", lowStockEvents: 10, outOfStockEvents: 0 },
+  { month: "Feb", lowStockEvents: 18, outOfStockEvents: 5 },
+  { month: "Mar", lowStockEvents: 6, outOfStockEvents: 2 },
+];

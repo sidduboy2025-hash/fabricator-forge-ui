@@ -27,3 +27,29 @@ export const walletTransactions: WalletTransaction[] = [
   { id: "TXN-012", type: "sft-deduction", description: "PRJ-001 — Marina Bay Tower section 2", amount: -4368, sftUnits: 6240, balanceAfter: -81550, date: "2026-02-10T11:00:00" },
   { id: "TXN-013", type: "credit-purchase", description: "Initial credit purchase — 50,000 credits", amount: 50000, balanceAfter: -77182, date: "2026-01-20T10:00:00" },
 ];
+
+export const revenueData = [
+  { month: "Oct", revenue: 145000 },
+  { month: "Nov", revenue: 168000 },
+  { month: "Dec", revenue: 210000 },
+  { month: "Jan", revenue: 185000 },
+  { month: "Feb", revenue: 240000 },
+  { month: "Mar", revenue: 285000 },
+];
+
+export const sftUsageHistory = [
+  { date: "Mar 10", sftUsed: 4200 },
+  { date: "Mar 11", sftUsed: 3800 },
+  { date: "Mar 12", sftUsed: 7100 },
+  { date: "Mar 13", sftUsed: 2900 },
+  { date: "Mar 14", sftUsed: 6400 },
+  { date: "Mar 15", sftUsed: 8357 },
+  { date: "Mar 16", sftUsed: 5100 },
+  { date: "Mar 17", sftUsed: 4800 },
+  { date: "Mar 18", sftUsed: 3200 },
+  { date: "Mar 19", sftUsed: 6100 },
+  { date: "Mar 20", sftUsed: 5600 },
+  { date: "Mar 21", sftUsed: 3900 },
+];
+
+export const currentSftRate = 0.70;
