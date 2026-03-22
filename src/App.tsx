@@ -5,20 +5,24 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
 import { RoleProvider } from "@/contexts/RoleContext";
-import DashboardPage from "./pages/DashboardPage";
-import ProjectsPage from "./pages/ProjectsPage";
-import InventoryPage from "./pages/InventoryPage";
-import PricingPage from "./pages/PricingPage";
-import BillingPage from "./pages/BillingPage";
-import PaymentsPage from "./pages/PaymentsPage";
-import SupplyChainPage from "./pages/SupplyChainPage";
-import OcrPage from "./pages/OcrPage";
-import ReportsPage from "./pages/ReportsPage";
-import BatchPage from "./pages/BatchPage";
-import AdminPage from "./pages/AdminPage";
-import FabricatorsPage from "./pages/FabricatorsPage";
-import QuotationsPage from "./pages/QuotationsPage";
-import NotFound from "./pages/NotFound";
+import HomePage from "./pages/HomePage";
+import DashboardPage from "./pages/shared/DashboardPage";
+import ProjectsPage from "./pages/shared/ProjectsPage";
+import InventoryPage from "./pages/shared/InventoryPage";
+import PricingPage from "./pages/shared/PricingPage";
+import BillingPage from "./pages/shared/BillingPage";
+import PaymentsPage from "./pages/shared/PaymentsPage";
+import SupplyChainPage from "./pages/shared/SupplyChainPage";
+import OcrPage from "./pages/shared/OcrPage";
+import ReportsPage from "./pages/shared/ReportsPage";
+import QuotationsPage from "./pages/shared/QuotationsPage";
+import FabricatorsPage from "./pages/shared/FabricatorsPage";
+import NotFound from "./pages/shared/NotFound";
+
+import AdminPage from "./pages/admin/AdminPage";
+import BatchPage from "./pages/admin/BatchPage";
+
+import OptimizationPage from "./pages/fabricator/OptimizationPage";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +35,8 @@ const App = () => (
       <BrowserRouter>
         <AppLayout>
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/fabricators" element={<FabricatorsPage />} />
             <Route path="/quotations" element={<QuotationsPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
@@ -44,6 +49,7 @@ const App = () => (
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/batch" element={<BatchPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/optimization" element={<OptimizationPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>

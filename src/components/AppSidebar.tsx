@@ -11,6 +11,7 @@ import {
   Layers,
   ShieldCheck,
   PlusCircle,
+  Scissors
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -35,7 +36,7 @@ const getNavGroups = (role: Role) => [
   {
     label: "Main Navigation",
     items: [
-      { title: "Home", url: "/", icon: LayoutDashboard },
+      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
       { title: "Projects", url: "/projects", icon: FolderKanban },
       { title: "Action", url: "/new-action", icon: PlusCircle },
       { title: "Invoices", url: "/quotations", icon: FileText },
@@ -46,6 +47,7 @@ const getNavGroups = (role: Role) => [
     label: "Operations",
     items: [
       { title: "Inventory", url: "/inventory", icon: Package },
+      ...(role === "FABRICATOR" ? [{ title: "Cutting Optimizer", url: "/optimization", icon: Scissors }] : []),
       ...(role === "DISTRIBUTOR" || role === "ADMIN" ? [{ title: "Fabricators", url: "/fabricators", icon: Network }] : []),
     ],
   },
@@ -101,7 +103,7 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => {
-                  const isActive = item.url === "/" ? location.pathname === "/" : location.pathname.startsWith(item.url);
+                  const isActive = item.url === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(item.url);
                   
                   if (item.title === "Action") {
                     return (
@@ -128,7 +130,7 @@ export function AppSidebar() {
                       <SidebarMenuButton asChild>
                         <NavLink
                           to={item.url}
-                          end={item.url === "/"}
+                          end={item.url === "/dashboard"}
                           className={cn(
                             "flex items-center gap-2.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                             "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
