@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { getOptimizerPricingConfig } from "@/lib/optimizerPricingConfig";
 import {
   buildQuotationOptionsFromConfig,
@@ -43,6 +44,10 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
   const [open, setOpen] = useState(false);
   const pricingConfig = useMemo(() => getOptimizerPricingConfig(), []);
   const quotationOptions = useMemo(() => buildQuotationOptionsFromConfig(pricingConfig), [pricingConfig]);
+  const quotationOptionById = useMemo(
+    () => Object.fromEntries(quotationOptions.map((option) => [option.id, option])),
+    [quotationOptions],
+  );
   const optionCategories = useMemo(
     () => Array.from(new Set(quotationOptions.map((option) => option.category))),
     [quotationOptions],
@@ -75,6 +80,10 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
   const [miscLabel, setMiscLabel] = useState("");
   const [miscPrice, setMiscPrice] = useState("");
 
+  // GST fields
+  const [gstPercentage, setGstPercentage] = useState(pricingConfig.appSettings.gstPercentage || 18);
+  const [billWithGst, setBillWithGst] = useState(true); // Default to GST invoice
+
   const addLineItem = () => {
     const option = quotationOptions.find((it) => it.id === selectedOptionId);
     if (!option) return;
@@ -88,6 +97,9 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
       unitPrice: option.defaultUnitPrice,
       totalPrice: option.defaultUnitPrice,
       priceManuallyEdited: false,
+      isMandatoryGst: option.isMandatoryGst,
+      gstAmount: 0,
+      gstApplied: false,
     };
 
     setLineItems((prev) => [...prev, lineItem]);
@@ -112,6 +124,9 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
       unitPrice,
       totalPrice: quantity * unitPrice,
       priceManuallyEdited: true,
+      isMandatoryGst: false,
+      gstAmount: 0,
+      gstApplied: false,
     };
 
     setLineItems((prev) => [...prev, lineItem]);
@@ -138,6 +153,9 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
       unitPrice,
       totalPrice: unitPrice,
       priceManuallyEdited: true,
+      isMandatoryGst: false,
+      gstAmount: 0,
+      gstApplied: false,
     };
 
     setLineItems((prev) => [...prev, lineItem]);
@@ -167,7 +185,26 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
     );
   };
 
-  const quotationTotal = calculateQuotationTotal(lineItems);
+  const lineItemsWithGst = useMemo(() => {
+    return lineItems.map((item) => {
+      const option = item.optionId ? quotationOptionById[item.optionId] : undefined;
+      const isMandatoryGst = option?.isMandatoryGst ?? item.isMandatoryGst ?? false;
+      const gstApplied = isMandatoryGst || billWithGst;
+      const gstAmount = gstApplied ? Number(((item.totalPrice || 0) * (gstPercentage / 100)).toFixed(2)) : 0;
+
+      return {
+        ...item,
+        isMandatoryGst,
+        gstApplied,
+        gstAmount,
+      };
+    });
+  }, [lineItems, quotationOptionById, billWithGst, gstPercentage]);
+
+  // Calculate totals including GST
+  const baseTotal = calculateQuotationTotal(lineItemsWithGst);
+  const gstTotal = lineItemsWithGst.reduce((sum, item) => sum + (item.gstAmount || 0), 0);
+  const grandTotal = baseTotal + gstTotal;
 
   const onLogoUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -192,14 +229,18 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
       client: clientName,
       date: getDate(0),
       validUntil: getDate(14),
-      amount: quotationTotal,
+      amount: baseTotal,
+      gstAmount: gstTotal,
+      totalAmount: grandTotal,
       status: "draft",
-      itemsCount: lineItems.length,
+      itemsCount: lineItemsWithGst.length,
       company: {
         name: companyName,
         logoDataUrl: companyLogoDataUrl || undefined,
       },
-      lineItems,
+      lineItems: lineItemsWithGst,
+      gstPercentage,
+      billWithGst,
     };
 
     onAdd(quotation);
@@ -215,6 +256,8 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
     setCustomUnitPrice("");
     setMiscLabel("");
     setMiscPrice("");
+    setGstPercentage(pricingConfig.appSettings.gstPercentage || 18);
+    setBillWithGst(true);
   };
 
   return (
@@ -260,6 +303,35 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
             </div>
           </div>
 
+          {/* GST Settings Section */}
+          <div className="rounded-lg border p-4 space-y-4">
+            <h4 className="text-sm font-semibold">GST Settings</h4>
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+              <div className="md:col-span-3 space-y-2">
+                <Label className="text-xs">GST Percentage (%)</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={gstPercentage}
+                  onChange={(e) => setGstPercentage(toNumber(e.target.value))}
+                  placeholder="Enter GST percentage"
+                />
+              </div>
+              <div className="md:col-span-3 flex items-center justify-between rounded-md border border-border p-3">
+                <div>
+                  <p className="text-sm font-medium">Bill with GST Invoice</p>
+                  <p className="text-xs text-muted-foreground">If turned off, only mandatory GST products include GST.</p>
+                </div>
+                <Switch
+                  checked={billWithGst}
+                  onCheckedChange={(checked) => setBillWithGst(checked)}
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Predefined Products Section */}
           <div className="rounded-lg border p-4 space-y-4">
             <h4 className="text-sm font-semibold">Add Products / Options</h4>
@@ -289,6 +361,7 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
                     {filteredOptions.map((option) => (
                       <SelectItem key={option.id} value={option.id}>
                         {option.label} - Rs {option.defaultUnitPrice.toLocaleString("en-IN")}
+                        {option.isMandatoryGst ? " (Mandatory GST)" : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -308,20 +381,24 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
                     <th className="text-left py-2 pr-2">Qty</th>
                     <th className="text-left py-2 pr-2">Unit Price</th>
                     <th className="text-left py-2 pr-2">Total</th>
+                    <th className="text-left py-2 pr-2">GST</th>
                     <th className="text-left py-2">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {lineItems.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="text-center text-muted-foreground py-6">
+                      <td colSpan={7} className="text-center text-muted-foreground py-6">
                         Add at least one product option.
                       </td>
                     </tr>
                   )}
-                  {lineItems.map((item) => (
+                  {lineItemsWithGst.map((item) => (
                     <tr key={item.id} className="border-b">
-                      <td className="py-2 pr-2">{item.label}</td>
+                      <td className="py-2 pr-2">
+                        {item.label}
+                        {item.isMandatoryGst ? " (Mandatory GST)" : ""}
+                      </td>
                       <td className="py-2 pr-2 capitalize">{item.category}</td>
                       <td className="py-2 pr-2">
                         <Input
@@ -340,6 +417,11 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
                         />
                       </td>
                       <td className="py-2 pr-2 font-semibold">Rs {item.totalPrice.toLocaleString("en-IN")}</td>
+                      <td className="py-2 pr-2">
+                        {item.gstApplied ? (
+                          <span className="text-xs text-muted-foreground">+ Rs {item.gstAmount.toLocaleString("en-IN")} GST</span>
+                        ) : null}
+                      </td>
                       <td className="py-2">
                         <Button type="button" size="icon" variant="ghost" onClick={() => removeLineItem(item.id)}>
                           <Trash2 className="h-4 w-4" />
@@ -353,7 +435,13 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
 
             <div className="flex justify-end">
               <div className="rounded-md bg-accent px-4 py-3 text-sm font-semibold">
-                Auto Calculated Total: Rs {quotationTotal.toLocaleString("en-IN")}
+                Base Total: Rs {baseTotal.toLocaleString("en-IN")}
+              </div>
+              <div className="rounded-md bg-accent px-4 py-3 text-sm font-semibold ml-2">
+                GST Total: Rs {gstTotal.toLocaleString("en-IN")}
+              </div>
+              <div className="rounded-md bg-accent px-4 py-3 text-sm font-semibold ml-2">
+                Grand Total: Rs {grandTotal.toLocaleString("en-IN")}
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ export interface QuotationOption {
   label: string;
   category: QuotationOptionCategory;
   defaultUnitPrice: number;
+  isMandatoryGst: boolean; // New field for mandatory GST flag
 }
 
 export interface QuotationLineItem {
@@ -18,6 +19,9 @@ export interface QuotationLineItem {
   unitPrice: number;
   totalPrice: number;
   priceManuallyEdited: boolean;
+  isMandatoryGst: boolean;
+  gstAmount: number; // New field for GST amount per line item
+  gstApplied: boolean; // New field to track if GST was applied to this item
 }
 
 export interface QuotationCompany {
@@ -30,9 +34,13 @@ export interface QuotationRecord {
   client: string;
   date: string;
   validUntil: string;
-  amount: number;
+  amount: number; // Base amount (before GST)
+  gstAmount: number; // Total GST amount
+  totalAmount: number; // Amount + GST
   status: QuotationStatus;
   itemsCount: number;
   company: QuotationCompany;
   lineItems: QuotationLineItem[];
+  gstPercentage: number; // GST percentage from profile settings
+  billWithGst: boolean; // Whether to bill with GST invoice
 }

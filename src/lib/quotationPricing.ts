@@ -7,6 +7,8 @@ const toCurrencyNumber = (value: number) => {
 };
 
 export const buildQuotationOptionsFromConfig = (config: OptimizerPricingConfig): QuotationOption[] => {
+  const mandatoryGstByOptionId = config.appSettings.mandatoryGstByOptionId || {};
+
   const profileOptions: QuotationOption[] = Object.keys(config.appSettings.stockLengths).map((profileName) => ({
     id: `profile:${profileName}`,
     label: `Profile - ${profileName}`,
@@ -14,6 +16,7 @@ export const buildQuotationOptionsFromConfig = (config: OptimizerPricingConfig):
     defaultUnitPrice: config.appSettings.useCommonPrice
       ? config.appSettings.commonPricePerKg
       : (config.appSettings.pricePerKg?.[profileName] || 0),
+    isMandatoryGst: mandatoryGstByOptionId[`profile:${profileName}`] ?? false,
   }));
 
   const hardwareOptions: QuotationOption[] = Object.entries(config.appSettings.hardwareSettings).map(([name, value]) => ({
@@ -21,6 +24,7 @@ export const buildQuotationOptionsFromConfig = (config: OptimizerPricingConfig):
     label: `Hardware - ${name}`,
     category: "hardware",
     defaultUnitPrice: value?.cost || 0,
+    isMandatoryGst: mandatoryGstByOptionId[`hardware:${name}`] ?? false,
   }));
 
   const glassOptions: QuotationOption[] = Object.entries(config.appSettings.glassSettings).map(([name, value]) => ({
@@ -28,6 +32,7 @@ export const buildQuotationOptionsFromConfig = (config: OptimizerPricingConfig):
     label: `Glass - ${name}`,
     category: "glass",
     defaultUnitPrice: value?.sheets?.[0]?.costPerSqFt || 0,
+    isMandatoryGst: mandatoryGstByOptionId[`glass:${name}`] ?? false,
   }));
 
   const seriesOptions: QuotationOption[] = Object.entries(config.appSettings.seriesDeductions).map(([name, value]) => {
@@ -43,8 +48,7 @@ export const buildQuotationOptionsFromConfig = (config: OptimizerPricingConfig):
       profiles.length > 0
         ? profiles.reduce((sum, profileName) => {
             const profileRate = config.appSettings.useCommonPrice
-              ? config.appSettings.commonPricePerKg
-              : (config.appSettings.pricePerKg?.[profileName] || 0);
+              ? config.appSettings.commonPricePerKg              : (config.appSettings.pricePerKg?.[profileName] || 0);
             return sum + profileRate;
           }, 0) / profiles.length
         : 0;
@@ -54,6 +58,7 @@ export const buildQuotationOptionsFromConfig = (config: OptimizerPricingConfig):
       label: `Series - ${name}`,
       category: "series",
       defaultUnitPrice: toCurrencyNumber(derivedRate),
+      isMandatoryGst: mandatoryGstByOptionId[`series:${name}`] ?? false,
     };
   });
 
@@ -63,11 +68,16 @@ export const buildQuotationOptionsFromConfig = (config: OptimizerPricingConfig):
 export const recalculateLineItem = (item: QuotationLineItem): QuotationLineItem => {
   const quantity = Math.max(0, Number(item.quantity || 0));
   const unitPrice = toCurrencyNumber(item.unitPrice);
+  const totalPrice = toCurrencyNumber(quantity * unitPrice);
   return {
     ...item,
     quantity,
     unitPrice,
-    totalPrice: toCurrencyNumber(quantity * unitPrice),
+    totalPrice,
+    isMandatoryGst: item.isMandatoryGst ?? false,
+    // Keep existing GST values if they exist, otherwise initialize
+    gstAmount: item.gstAmount ?? 0,
+    gstApplied: item.gstApplied ?? false,
   };
 };
 

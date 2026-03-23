@@ -109,6 +109,19 @@ export default function ProfilePage() {
     }));
   };
 
+  const updateMandatoryGst = (optionId: string, checked: boolean) => {
+    setDraftConfig((prev) => ({
+      ...prev,
+      appSettings: {
+        ...prev.appSettings,
+        mandatoryGstByOptionId: {
+          ...prev.appSettings.mandatoryGstByOptionId,
+          [optionId]: checked,
+        },
+      },
+    }));
+  };
+
   const addProfile = () => {
     const name = newProfileName.trim();
     if (!name) return;
@@ -130,6 +143,7 @@ export default function ProfilePage() {
   const removeProfile = (profileName: string) => {
     setDraftConfig((prev) => {
       const next = cloneOptimizerPricingConfig(prev);
+      delete next.appSettings.mandatoryGstByOptionId[`profile:${profileName}`];
       delete next.appSettings.stockLengths[profileName];
       delete next.appSettings.pricePerKg[profileName];
       delete next.appSettings.weightPerMeter[profileName];
@@ -186,6 +200,7 @@ export default function ProfilePage() {
   const removeHardwareType = (hardwareType: string) => {
     setDraftConfig((prev) => {
       const next = cloneOptimizerPricingConfig(prev);
+      delete next.appSettings.mandatoryGstByOptionId[`hardware:${hardwareType}`];
       delete next.appSettings.hardwareSettings[hardwareType];
       return next;
     });
@@ -197,11 +212,8 @@ export default function ProfilePage() {
       appSettings: {
         ...prev.appSettings,
         glassSettings: {
-          ...prev.appSettings.glassSettings,
-          [glassType]: {
-            ...prev.appSettings.glassSettings[glassType],
-            [field]: field === "processingType" ? value : toNumber(value),
-          },
+          ...prev.appSettings.glassSettings[glassType],
+          [field]: field === "processingType" ? value : toNumber(value),
         },
       },
     }));
@@ -216,11 +228,8 @@ export default function ProfilePage() {
         appSettings: {
           ...prev.appSettings,
           glassSettings: {
-            ...prev.appSettings.glassSettings,
-            [glassType]: {
-              ...prev.appSettings.glassSettings[glassType],
-              sheets,
-            },
+            ...prev.appSettings.glassSettings[glassType],
+            sheets,
           },
         },
       };
@@ -236,11 +245,8 @@ export default function ProfilePage() {
         appSettings: {
           ...prev.appSettings,
           glassSettings: {
-            ...prev.appSettings.glassSettings,
-            [glassType]: {
-              ...current,
-              sheets: [...current.sheets, { id: nextId, sheetWidth: 2440, sheetHeight: 1830, costPerSqFt: 0 }],
-            },
+            ...current,
+            sheets: [...current.sheets, { id: nextId, sheetWidth: 2440, sheetHeight: 1830, costPerSqFt: 0 }],
           },
         },
       };
@@ -256,11 +262,8 @@ export default function ProfilePage() {
         appSettings: {
           ...prev.appSettings,
           glassSettings: {
-            ...prev.appSettings.glassSettings,
-            [glassType]: {
-              ...current,
-              sheets: nextSheets.length > 0 ? nextSheets : [{ id: 1, sheetWidth: 2440, sheetHeight: 1830, costPerSqFt: 0 }],
-            },
+            ...current,
+            sheets: nextSheets.length > 0 ? nextSheets : [{ id: 1, sheetWidth: 2440, sheetHeight: 1830, costPerSqFt: 0 }],
           },
         },
       };
@@ -290,6 +293,7 @@ export default function ProfilePage() {
   const removeGlassType = (glassType: string) => {
     setDraftConfig((prev) => {
       const next = cloneOptimizerPricingConfig(prev);
+      delete next.appSettings.mandatoryGstByOptionId[`glass:${glassType}`];
       delete next.appSettings.glassSettings[glassType];
       return next;
     });
@@ -301,11 +305,8 @@ export default function ProfilePage() {
       appSettings: {
         ...prev.appSettings,
         seriesDeductions: {
-          ...prev.appSettings.seriesDeductions,
-          [seriesName]: {
-            ...prev.appSettings.seriesDeductions[seriesName],
-            [key]: toNumber(value),
-          },
+          ...prev.appSettings.seriesDeductions[seriesName],
+          [key]: toNumber(value),
         },
       },
     }));
@@ -317,11 +318,8 @@ export default function ProfilePage() {
       appSettings: {
         ...prev.appSettings,
         seriesDeductions: {
-          ...prev.appSettings.seriesDeductions,
-          [seriesName]: {
-            ...prev.appSettings.seriesDeductions[seriesName],
-            [key]: profileName,
-          },
+          ...prev.appSettings.seriesDeductions[seriesName],
+          [key]: profileName,
         },
       },
     }));
@@ -335,7 +333,6 @@ export default function ProfilePage() {
       appSettings: {
         ...prev.appSettings,
         seriesDeductions: {
-          ...prev.appSettings.seriesDeductions,
           [name]: {
             sashLengthDeduction: 0,
             sashWidthOverlap: 0,
@@ -360,6 +357,7 @@ export default function ProfilePage() {
   const removeSeries = (seriesName: string) => {
     setDraftConfig((prev) => {
       const next = cloneOptimizerPricingConfig(prev);
+      delete next.appSettings.mandatoryGstByOptionId[`series:${seriesName}`];
       delete next.appSettings.seriesDeductions[seriesName];
       return next;
     });
@@ -484,6 +482,27 @@ export default function ProfilePage() {
         <TabsContent value="configure-pricing" className="space-y-6">
           <Card>
             <CardHeader>
+              <CardTitle>Quotation GST</CardTitle>
+              <CardDescription>Set the GST percentage used for quotations.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>GST Percentage (%)</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={draftConfig.appSettings.gstPercentage || 0}
+                  onChange={(e) => updateCoreSetting("gstPercentage", e.target.value)}
+                  placeholder="Enter GST percentage"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Application Settings</CardTitle>
               <CardDescription>Core optimizer and costing settings from your reference module.</CardDescription>
             </CardHeader>
@@ -530,8 +549,7 @@ export default function ProfilePage() {
               </div>
               <div className="space-y-2">
                 <Label>Common Price Per Kg</Label>
-                <Input
-                  type="number"
+                <Input                  type="number"
                   value={draftConfig.appSettings.commonPricePerKg}
                   onChange={(e) => updateCoreSetting("commonPricePerKg", e.target.value)}
                 />
@@ -615,8 +633,7 @@ export default function ProfilePage() {
                 </div>
               ))}
               <div className="flex gap-2">
-                <Input
-                  value={newTopLevelSeriesName}
+                <Input                  value={newTopLevelSeriesName}
                   onChange={(e) => setNewTopLevelSeriesName(e.target.value)}
                   placeholder="New top-level series name"
                 />
@@ -633,13 +650,20 @@ export default function ProfilePage() {
             <CardContent className="space-y-4">
               {Object.entries(draftConfig.appSettings.hardwareSettings).map(([hardwareType, settings]) => (
                 <div key={hardwareType} className="grid grid-cols-1 md:grid-cols-12 gap-2 items-center">
-                  <Label className="md:col-span-4">{hardwareType}</Label>
+                  <Label className="md:col-span-3">{hardwareType}</Label>
                   <Input
-                    className="md:col-span-7"
+                    className="md:col-span-6"
                     type="number"
                     value={settings?.cost ?? 0}
                     onChange={(e) => updateHardwareCost(hardwareType, e.target.value)}
                   />
+                  <div className="md:col-span-2 flex items-center justify-between rounded-md border border-border px-2 py-1.5">
+                    <span className="text-xs">Mandatory GST</span>
+                    <Switch
+                      checked={draftConfig.appSettings.mandatoryGstByOptionId[`hardware:${hardwareType}`] ?? false}
+                      onCheckedChange={(checked) => updateMandatoryGst(`hardware:${hardwareType}`, checked)}
+                    />
+                  </div>
                   <Button className="md:col-span-1" size="icon" variant="ghost" onClick={() => removeHardwareType(hardwareType)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -665,7 +689,16 @@ export default function ProfilePage() {
               {Object.entries(draftConfig.appSettings.glassSettings).map(([glassType, config]) => (
                 <div key={glassType} className="rounded-lg border p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold">{glassType}</p>
+                    <div>
+                      <p className="text-sm font-semibold">{glassType}</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Mandatory GST</span>
+                        <Switch
+                          checked={draftConfig.appSettings.mandatoryGstByOptionId[`glass:${glassType}`] ?? false}
+                          onCheckedChange={(checked) => updateMandatoryGst(`glass:${glassType}`, checked)}
+                        />
+                      </div>
+                    </div>
                     <Button size="sm" variant="destructive" onClick={() => removeGlassType(glassType)}>
                       <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove Glass
                     </Button>
@@ -753,6 +786,7 @@ export default function ProfilePage() {
                       <th className="text-left py-2 pr-2">Usable Rem</th>
                       <th className="text-left py-2 pr-2">Negligible</th>
                       <th className="text-left py-2 pr-2">Height</th>
+                      <th className="text-left py-2 pr-2">Mandatory GST</th>
                       <th className="text-left py-2">Action</th>
                     </tr>
                   </thead>
@@ -766,6 +800,12 @@ export default function ProfilePage() {
                         <td className="py-2 pr-2"><Input type="number" value={draftConfig.appSettings.usableRemittanceThresholds[profileName] || 0} onChange={(e) => updateProfileSetting("usableRemittanceThresholds", profileName, e.target.value)} /></td>
                         <td className="py-2 pr-2"><Input type="number" value={draftConfig.appSettings.fixedNegligibleWasteLimit[profileName] || 0} onChange={(e) => updateProfileSetting("fixedNegligibleWasteLimit", profileName, e.target.value)} /></td>
                         <td className="py-2 pr-2"><Input type="number" value={draftConfig.appSettings.profileDimensions[profileName]?.height || 0} onChange={(e) => updateProfileDimension(profileName, e.target.value)} /></td>
+                        <td className="py-2 pr-2">
+                          <Switch
+                            checked={draftConfig.appSettings.mandatoryGstByOptionId[`profile:${profileName}`] ?? false}
+                            onCheckedChange={(checked) => updateMandatoryGst(`profile:${profileName}`, checked)}
+                          />
+                        </td>
                         <td className="py-2"><Button size="icon" variant="ghost" onClick={() => removeProfile(profileName)}><Trash2 className="h-4 w-4" /></Button></td>
                       </tr>
                     ))}
@@ -788,7 +828,16 @@ export default function ProfilePage() {
               {Object.entries(draftConfig.appSettings.seriesDeductions).map(([seriesName, deductions]) => (
                 <div key={seriesName} className="rounded-lg border p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold">{seriesName}</p>
+                    <div>
+                      <p className="text-sm font-semibold">{seriesName}</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Mandatory GST</span>
+                        <Switch
+                          checked={draftConfig.appSettings.mandatoryGstByOptionId[`series:${seriesName}`] ?? false}
+                          onCheckedChange={(checked) => updateMandatoryGst(`series:${seriesName}`, checked)}
+                        />
+                      </div>
+                    </div>
                     <Button size="sm" variant="destructive" onClick={() => removeSeries(seriesName)}>
                       <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove Series
                     </Button>
