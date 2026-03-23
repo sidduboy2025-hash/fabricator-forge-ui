@@ -31,6 +31,9 @@ export interface QuotationCompany {
 
 export interface QuotationRecord {
   id: string;
+  versionGroupId?: string;
+  versionNumber?: number;
+  previousVersionId?: string;
   client: string;
   date: string;
   validUntil: string;

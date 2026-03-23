@@ -121,12 +121,13 @@ export const downloadQuotationPdf = (quotation: QuotationRecord) => {
   const finalY = (doc as any).lastAutoTable?.finalY || 340;
   const summaryTop = finalY + 24;
   const summaryWidth = 250;
+  const summaryHeight = hasAnyGst ? 112 : 86;
   const summaryLeft = pageWidth - horizontalPadding - summaryWidth;
 
   doc.setFillColor(247, 250, 253);
-  doc.roundedRect(summaryLeft, summaryTop, summaryWidth, hasAnyGst ? 112 : 86, 8, 8, "F");
+  doc.roundedRect(summaryLeft, summaryTop, summaryWidth, summaryHeight, 8, 8, "F");
   doc.setDrawColor(213, 224, 236);
-  doc.roundedRect(summaryLeft, summaryTop, summaryWidth, hasAnyGst ? 112 : 86, 8, 8, "S");
+  doc.roundedRect(summaryLeft, summaryTop, summaryWidth, summaryHeight, 8, 8, "S");
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
@@ -156,13 +157,19 @@ export const downloadQuotationPdf = (quotation: QuotationRecord) => {
     doc.text(currency(quotation.totalAmount), summaryLeft + summaryWidth - 16, summaryTop + 56, { align: "right" });
   }
 
+  const notesTop = summaryTop + summaryHeight + 20;
+  const notesWidth = pageWidth - (horizontalPadding * 2);
+  const noteLine1 = doc.splitTextToSize("1. Rates are valid up to the validity date shown above.", notesWidth);
+  const noteLine2 = doc.splitTextToSize("2. Final quantities and execution details will be confirmed before production.", notesWidth);
+  const noteLine3 = doc.splitTextToSize("3. This quotation is generated from the latest configured price profile.", notesWidth);
+
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.setTextColor(73, 86, 99);
-  doc.text("Notes", horizontalPadding, summaryTop + 18);
-  doc.text("1. Rates are valid up to the validity date shown above.", horizontalPadding, summaryTop + 34);
-  doc.text("2. Final quantities and execution details will be confirmed before production.", horizontalPadding, summaryTop + 48);
-  doc.text("3. This quotation is generated from the latest configured price profile.", horizontalPadding, summaryTop + 62);
+  doc.text("Notes", horizontalPadding, notesTop);
+  doc.text(noteLine1, horizontalPadding, notesTop + 16);
+  doc.text(noteLine2, horizontalPadding, notesTop + 30);
+  doc.text(noteLine3, horizontalPadding, notesTop + 44);
 
   doc.setDrawColor(224, 232, 240);
   doc.line(horizontalPadding, pageHeight - 54, pageWidth - horizontalPadding, pageHeight - 54);

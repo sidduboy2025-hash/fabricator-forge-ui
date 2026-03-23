@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,9 +38,21 @@ const toNumber = (value: string) => {
 
 interface CreateQuotationDialogProps {
   onAdd: (quotation: QuotationRecord) => void;
+  initialQuotation?: QuotationRecord;
+  trigger?: ReactNode;
+  title?: string;
+  description?: string;
+  submitLabel?: string;
 }
 
-export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
+export function CreateQuotationDialog({
+  onAdd,
+  initialQuotation,
+  trigger,
+  title,
+  description,
+  submitLabel,
+}: CreateQuotationDialogProps) {
   const [open, setOpen] = useState(false);
   const pricingConfig = useMemo(() => getOptimizerPricingConfig(), []);
   const quotationOptions = useMemo(() => buildQuotationOptionsFromConfig(pricingConfig), [pricingConfig]);
@@ -53,9 +65,9 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
     [quotationOptions],
   );
 
-  const [clientName, setClientName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [companyLogoDataUrl, setCompanyLogoDataUrl] = useState("");
+  const [clientName, setClientName] = useState(initialQuotation?.client || "");
+  const [companyName, setCompanyName] = useState(initialQuotation?.company?.name || "");
+  const [companyLogoDataUrl, setCompanyLogoDataUrl] = useState(initialQuotation?.company?.logoDataUrl || "");
   const [selectedCategory, setSelectedCategory] = useState(optionCategories[0] || "profile");
   const [selectedOptionId, setSelectedOptionId] = useState("");
 
@@ -69,7 +81,7 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
     setSelectedOptionId(nextOptionId);
   }, [filteredOptions]);
 
-  const [lineItems, setLineItems] = useState<QuotationLineItem[]>([]);
+  const [lineItems, setLineItems] = useState<QuotationLineItem[]>(initialQuotation?.lineItems || []);
 
   // Custom item state (for labour costs with quantity)
   const [customLabel, setCustomLabel] = useState("");
@@ -81,8 +93,28 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
   const [miscPrice, setMiscPrice] = useState("");
 
   // GST fields
-  const [gstPercentage, setGstPercentage] = useState(pricingConfig.appSettings.gstPercentage || 18);
-  const [billWithGst, setBillWithGst] = useState(true); // Default to GST invoice
+  const [gstPercentage, setGstPercentage] = useState(initialQuotation?.gstPercentage ?? pricingConfig.appSettings.gstPercentage ?? 18);
+  const [billWithGst, setBillWithGst] = useState(initialQuotation?.billWithGst ?? true);
+
+  const resetForm = (quotation?: QuotationRecord) => {
+    setClientName(quotation?.client || "");
+    setCompanyName(quotation?.company?.name || "");
+    setCompanyLogoDataUrl(quotation?.company?.logoDataUrl || "");
+    setLineItems(quotation?.lineItems || []);
+    setCustomLabel("");
+    setCustomQuantity("1");
+    setCustomUnitPrice("");
+    setMiscLabel("");
+    setMiscPrice("");
+    setGstPercentage(quotation?.gstPercentage ?? pricingConfig.appSettings.gstPercentage ?? 18);
+    setBillWithGst(quotation?.billWithGst ?? true);
+  };
+
+  useEffect(() => {
+    if (open) {
+      resetForm(initialQuotation);
+    }
+  }, [open, initialQuotation]);
 
   const addLineItem = () => {
     const option = quotationOptions.find((it) => it.id === selectedOptionId);
@@ -247,33 +279,25 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
     downloadQuotationPdf(quotation);
 
     setOpen(false);
-    setClientName("");
-    setCompanyName("");
-    setCompanyLogoDataUrl("");
-    setLineItems([]);
-    setCustomLabel("");
-    setCustomQuantity("1");
-    setCustomUnitPrice("");
-    setMiscLabel("");
-    setMiscPrice("");
-    setGstPercentage(pricingConfig.appSettings.gstPercentage || 18);
-    setBillWithGst(true);
+    resetForm(initialQuotation);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2 text-xs h-8">
-          <Plus className="h-4 w-4" />
-          Create Quotation
-        </Button>
+        {trigger || (
+          <Button className="gap-2 text-xs h-8">
+            <Plus className="h-4 w-4" />
+            Create Quotation
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[1100px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Generate Quotation</DialogTitle>
+          <DialogTitle>{title || "Generate Quotation"}</DialogTitle>
           <DialogDescription>
-            Items and base pricing come from your profile configuration. You can edit only pricing and quantities here.
+            {description || "Items and base pricing come from your profile configuration. You can edit only pricing and quantities here."}
           </DialogDescription>
         </DialogHeader>
 
@@ -515,7 +539,7 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={!clientName || !companyName || lineItems.length === 0}>
-              Generate Quotation
+              {submitLabel || "Generate Quotation"}
             </Button>
           </DialogFooter>
         </form>
