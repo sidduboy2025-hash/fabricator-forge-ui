@@ -36,6 +36,10 @@ export type OptimizerAppSettings = {
   glassSettings: Record<string, GlassTypeConfig>;
   hardwareSettings: Record<string, { cost: number }>;
   seriesDeductions: Record<string, any>;
+  windowTypeOptions: string[];
+  profileColorOptions: string[];
+  meshTypeOptions: string[];
+  handleTypeOptions: string[];
   gstPercentage: number; // GST percentage for quotations
   mandatoryGstByOptionId: Record<string, boolean>;
 };
@@ -439,6 +443,15 @@ export const defaultOptimizerPricingConfig: OptimizerPricingConfig = {
         interlockHeightDeduction: 100,
       },
     },
+    windowTypeOptions: ["Sliding Window", "Sliding Door", "Fixed Window", "Ventilator"],
+    profileColorOptions: ["Natural", "White", "Black", "Champagne", "Wood Finish"],
+    meshTypeOptions: ["None", "Fiber Mesh", "SS304 Mesh", "Pleated Mesh"],
+    handleTypeOptions: [
+      "Sliding Touch Lock Left White",
+      "Sliding Touch Lock Right White",
+      "Crescent Handle White",
+      "Mortise Handle White",
+    ],
     gstPercentage: 18, // Default GST percentage
     mandatoryGstByOptionId: {},
   }
@@ -482,6 +495,22 @@ export const getOptimizerPricingConfig = (): OptimizerPricingConfig => {
         glassSettings: { ...defaultAppSettings.glassSettings, ...(parsed?.appSettings?.glassSettings ?? {}) },
         hardwareSettings: { ...defaultAppSettings.hardwareSettings, ...(parsed?.appSettings?.hardwareSettings ?? {}) },
         seriesDeductions: { ...defaultAppSettings.seriesDeductions, ...(parsed?.appSettings?.seriesDeductions ?? {}) },
+        windowTypeOptions:
+          Array.isArray(parsed?.appSettings?.windowTypeOptions) && parsed.appSettings.windowTypeOptions.length > 0
+            ? parsed.appSettings.windowTypeOptions
+            : defaultAppSettings.windowTypeOptions,
+        profileColorOptions:
+          Array.isArray(parsed?.appSettings?.profileColorOptions) && parsed.appSettings.profileColorOptions.length > 0
+            ? parsed.appSettings.profileColorOptions
+            : defaultAppSettings.profileColorOptions,
+        meshTypeOptions:
+          Array.isArray(parsed?.appSettings?.meshTypeOptions) && parsed.appSettings.meshTypeOptions.length > 0
+            ? parsed.appSettings.meshTypeOptions
+            : defaultAppSettings.meshTypeOptions,
+        handleTypeOptions:
+          Array.isArray(parsed?.appSettings?.handleTypeOptions) && parsed.appSettings.handleTypeOptions.length > 0
+            ? parsed.appSettings.handleTypeOptions
+            : defaultAppSettings.handleTypeOptions,
         mandatoryGstByOptionId: {
           ...defaultAppSettings.mandatoryGstByOptionId,
           ...(parsed?.appSettings?.mandatoryGstByOptionId ?? {}),

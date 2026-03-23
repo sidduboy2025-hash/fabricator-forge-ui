@@ -27,8 +27,10 @@ export function QuotationList({ data, onDownload, onDuplicate, onView }: Quotati
 
   const columns: Column<QuotationRecord>[] = [
     { key: "id", label: "Quote ID", sortable: true, className: "font-mono text-xs w-24 text-primary" },
+    { key: "projectName", label: "Project", sortable: true, render: (r) => <span className="font-medium">{r.projectName || "-"}</span> },
     { key: "client", label: "Client", sortable: true, render: (r) => <span className="font-medium">{r.client}</span> },
     { key: "date", label: "Date", sortable: true, className: "text-muted-foreground" },
+    { key: "itemsCount", label: "Windows", sortable: true, render: (r) => <span>{r.windows.length || r.itemsCount}</span> },
     { key: "amount", label: "Amount", sortable: true, render: (r) => <CurrencyDisplay amount={r.amount} /> },
     { key: "status", label: "Status", sortable: true, render: (r) => <StatusBadge status={r.status as any} /> },
     {

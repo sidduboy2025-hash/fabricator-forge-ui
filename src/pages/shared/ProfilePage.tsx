@@ -46,6 +46,10 @@ export default function ProfilePage() {
   const [newHardwareTypeName, setNewHardwareTypeName] = useState("");
   const [newSeriesName, setNewSeriesName] = useState("");
   const [newTopLevelSeriesName, setNewTopLevelSeriesName] = useState("");
+  const [newWindowTypeOption, setNewWindowTypeOption] = useState("");
+  const [newProfileColorOption, setNewProfileColorOption] = useState("");
+  const [newMeshTypeOption, setNewMeshTypeOption] = useState("");
+  const [newHandleTypeOption, setNewHandleTypeOption] = useState("");
 
   const allProfiles = useMemo(() => {
     const set = new Set<string>();
@@ -428,6 +432,49 @@ export default function ProfilePage() {
     });
   };
 
+  const addQuotationOption = (
+    key: "windowTypeOptions" | "profileColorOptions" | "meshTypeOptions" | "handleTypeOptions",
+    value: string,
+    reset: () => void,
+  ) => {
+    const nextValue = value.trim();
+    if (!nextValue) return;
+
+    setDraftConfig((prev) => {
+      const current = prev.appSettings[key] || [];
+      if (current.includes(nextValue)) return prev;
+
+      return {
+        ...prev,
+        appSettings: {
+          ...prev.appSettings,
+          [key]: [...current, nextValue],
+        },
+      };
+    });
+
+    reset();
+  };
+
+  const removeQuotationOption = (
+    key: "windowTypeOptions" | "profileColorOptions" | "meshTypeOptions" | "handleTypeOptions",
+    index: number,
+  ) => {
+    setDraftConfig((prev) => {
+      const current = prev.appSettings[key] || [];
+      const next = current.filter((_, i) => i !== index);
+      if (next.length === 0) return prev;
+
+      return {
+        ...prev,
+        appSettings: {
+          ...prev.appSettings,
+          [key]: next,
+        },
+      };
+    });
+  };
+
   const saveDraft = () => {
     try {
       saveOptimizerPricingConfig(draftConfig);
@@ -593,6 +640,90 @@ export default function ProfilePage() {
               <CardDescription>Add, update and remove top-level series and their track options.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <Card className="border-dashed">
+                <CardHeader>
+                  <CardTitle className="text-base">Quotation Option Lists</CardTitle>
+                  <CardDescription>
+                    Manage dropdown options used while creating window-wise quotations.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-lg border p-3 space-y-2">
+                      <Label>Window Types</Label>
+                      <div className="space-y-2 max-h-40 overflow-auto">
+                        {draftConfig.appSettings.windowTypeOptions.map((item, index) => (
+                          <div key={`window-type-${item}-${index}`} className="flex items-center justify-between rounded border px-2 py-1">
+                            <span className="text-sm">{item}</span>
+                            <Button size="icon" variant="ghost" onClick={() => removeQuotationOption("windowTypeOptions", index)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input value={newWindowTypeOption} onChange={(e) => setNewWindowTypeOption(e.target.value)} placeholder="Add window type" />
+                        <Button onClick={() => addQuotationOption("windowTypeOptions", newWindowTypeOption, () => setNewWindowTypeOption(""))}>Add</Button>
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg border p-3 space-y-2">
+                      <Label>Profile Colours</Label>
+                      <div className="space-y-2 max-h-40 overflow-auto">
+                        {draftConfig.appSettings.profileColorOptions.map((item, index) => (
+                          <div key={`profile-color-${item}-${index}`} className="flex items-center justify-between rounded border px-2 py-1">
+                            <span className="text-sm">{item}</span>
+                            <Button size="icon" variant="ghost" onClick={() => removeQuotationOption("profileColorOptions", index)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input value={newProfileColorOption} onChange={(e) => setNewProfileColorOption(e.target.value)} placeholder="Add profile colour" />
+                        <Button onClick={() => addQuotationOption("profileColorOptions", newProfileColorOption, () => setNewProfileColorOption(""))}>Add</Button>
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg border p-3 space-y-2">
+                      <Label>Mesh Types</Label>
+                      <div className="space-y-2 max-h-40 overflow-auto">
+                        {draftConfig.appSettings.meshTypeOptions.map((item, index) => (
+                          <div key={`mesh-type-${item}-${index}`} className="flex items-center justify-between rounded border px-2 py-1">
+                            <span className="text-sm">{item}</span>
+                            <Button size="icon" variant="ghost" onClick={() => removeQuotationOption("meshTypeOptions", index)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input value={newMeshTypeOption} onChange={(e) => setNewMeshTypeOption(e.target.value)} placeholder="Add mesh type" />
+                        <Button onClick={() => addQuotationOption("meshTypeOptions", newMeshTypeOption, () => setNewMeshTypeOption(""))}>Add</Button>
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg border p-3 space-y-2">
+                      <Label>Handle Types</Label>
+                      <div className="space-y-2 max-h-40 overflow-auto">
+                        {draftConfig.appSettings.handleTypeOptions.map((item, index) => (
+                          <div key={`handle-type-${item}-${index}`} className="flex items-center justify-between rounded border px-2 py-1">
+                            <span className="text-sm">{item}</span>
+                            <Button size="icon" variant="ghost" onClick={() => removeQuotationOption("handleTypeOptions", index)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input value={newHandleTypeOption} onChange={(e) => setNewHandleTypeOption(e.target.value)} placeholder="Add handle type" />
+                        <Button onClick={() => addQuotationOption("handleTypeOptions", newHandleTypeOption, () => setNewHandleTypeOption(""))}>Add</Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {Object.entries(draftConfig.trackOptionsMap).map(([seriesName, options]) => (
                 <div key={seriesName} className="rounded-lg border p-4 space-y-3">
                   <div className="flex items-center justify-between">

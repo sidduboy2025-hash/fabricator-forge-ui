@@ -29,11 +29,32 @@ export interface QuotationCompany {
   logoDataUrl?: string;
 }
 
+export interface QuotationWindowItem {
+  id: string;
+  serialNumber: string;
+  width: number;
+  height: number;
+  quantity: number;
+  windowType: string;
+  topLevelSeries: string;
+  series: string;
+  numTracks: number;
+  profileColor: string;
+  glassType: string;
+  meshType: string;
+  handleType: string;
+  unitAreaSqFt: number;
+  totalAreaSqFt: number;
+  unitCost: number;
+  totalCost: number;
+}
+
 export interface QuotationRecord {
   id: string;
   versionGroupId?: string;
   versionNumber?: number;
   previousVersionId?: string;
+  projectName: string;
   client: string;
   date: string;
   validUntil: string;
@@ -43,6 +64,7 @@ export interface QuotationRecord {
   status: QuotationStatus;
   itemsCount: number;
   company: QuotationCompany;
+  windows: QuotationWindowItem[];
   lineItems: QuotationLineItem[];
   gstPercentage: number; // GST percentage from profile settings
   billWithGst: boolean; // Whether to bill with GST invoice
