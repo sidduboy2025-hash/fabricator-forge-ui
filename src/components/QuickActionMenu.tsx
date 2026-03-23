@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FolderPlus, Ruler, FileText, Zap, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export function QuickActionMenu({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -28,21 +29,32 @@ export function QuickActionMenu({ children }: { children: React.ReactNode }) {
         {children}
       </DialogTrigger>
       {/* max-w-[340px] creates a nice tight grid, align-bottom on mobile */}
-      <DialogContent className="max-w-[360px] p-6 sm:max-w-md rounded-2xl mx-auto top-[50%] sm:top-[50%] translate-y-[-50%]">
+      <DialogContent className="max-w-[360px] p-6 sm:max-w-md rounded-2xl mx-auto top-[50%] sm:top-[50%] translate-y-[-50%] overflow-hidden border-none bg-background/80 backdrop-blur-xl shadow-2xl">
         <DialogHeader className="mb-4">
-          <DialogTitle className="text-xl font-bold">Quick Actions</DialogTitle>
+          <DialogTitle className="text-2xl font-extrabold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Quick Actions
+          </DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4 animate-in fade-in zoom-in duration-300">
           {actions.map((action, idx) => (
             <div
               key={idx}
               onClick={() => handleAction(action.route)}
-              className="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-border/60 bg-card hover:bg-accent hover:border-primary/50 transition-all cursor-pointer shadow-sm active:scale-95"
+              className={cn(
+                "group flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border bg-card/50",
+                "hover:bg-accent hover:border-primary/50 transition-all cursor-pointer shadow-sm active:scale-95",
+                "backdrop-blur-sm"
+              )}
             >
-              <div className={`p-3 rounded-full ${action.bg} ${action.color} group-hover:scale-110 transition-transform`}>
-                <action.icon className="h-6 w-6" />
+              <div className={cn(
+                "p-4 rounded-2xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg",
+                action.bg, action.color
+              )}>
+                <action.icon className="h-7 w-7" />
               </div>
-              <span className="text-xs font-semibold text-center leading-tight">{action.title}</span>
+              <span className="text-xs font-bold tracking-tight text-center leading-tight uppercase opacity-80 group-hover:opacity-100 italic">
+                {action.title}
+              </span>
             </div>
           ))}
         </div>

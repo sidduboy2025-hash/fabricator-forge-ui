@@ -75,28 +75,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* 4. Primary Actions (2x2 Grid) */}
-      <section>
-        <h2 className="text-base font-semibold tracking-tight mb-3">Quick Actions</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center gap-3 rounded-xl border-dashed bg-card hover:bg-accent hover:border-primary shadow-sm active:scale-95 transition-all">
-            <FileText className="h-6 w-6 text-primary" />
-            <span className="text-xs font-medium">New Quotation</span>
-          </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center gap-3 rounded-xl border-dashed bg-card hover:bg-accent hover:border-primary shadow-sm active:scale-95 transition-all">
-            <Ruler className="h-6 w-6 text-primary" />
-            <span className="text-xs font-medium">Add Measurement</span>
-          </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center gap-3 rounded-xl border-dashed bg-card hover:bg-accent hover:border-primary shadow-sm active:scale-95 transition-all">
-            <Zap className="h-6 w-6 text-primary" />
-            <span className="text-xs font-medium">Run Optimization</span>
-          </Button>
-          <Button variant="outline" className="h-24 flex flex-col items-center justify-center gap-3 rounded-xl border-dashed bg-card hover:bg-accent hover:border-primary shadow-sm active:scale-95 transition-all">
-            <FolderPlus className="h-6 w-6 text-primary" />
-            <span className="text-xs font-medium">Create Project</span>
-          </Button>
-        </div>
-      </section>
+      {/* 4. Primary Actions Removed in favor of Global FAB */}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 5. Projects List */}
