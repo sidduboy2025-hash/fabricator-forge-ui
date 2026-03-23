@@ -15,7 +15,7 @@ export default function HomePage() {
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
       <div className="max-w-3xl w-full space-y-8 animate-fade-in-up">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">Welcome to Fabricator Forge</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Welccome to Fabricator Forge</h1>
           <p className="text-lg text-muted-foreground">Please select your role to continue</p>
         </div>
 
