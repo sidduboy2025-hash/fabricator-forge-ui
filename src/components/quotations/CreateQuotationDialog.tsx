@@ -66,6 +66,15 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
 
   const [lineItems, setLineItems] = useState<QuotationLineItem[]>([]);
 
+  // Custom item state (for labour costs with quantity)
+  const [customLabel, setCustomLabel] = useState("");
+  const [customQuantity, setCustomQuantity] = useState("1");
+  const [customUnitPrice, setCustomUnitPrice] = useState("");
+
+  // Miscellaneous cost state (only label and cost, no quantity)
+  const [miscLabel, setMiscLabel] = useState("");
+  const [miscPrice, setMiscPrice] = useState("");
+
   const addLineItem = () => {
     const option = quotationOptions.find((it) => it.id === selectedOptionId);
     if (!option) return;
@@ -82,6 +91,58 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
     };
 
     setLineItems((prev) => [...prev, lineItem]);
+  };
+
+  const addCustomLineItem = () => {
+    const label = customLabel.trim();
+    if (!label) return;
+
+    const quantity = toNumber(customQuantity);
+    const unitPrice = toNumber(customUnitPrice);
+    if (quantity <= 0 || unitPrice <= 0) {
+      return;
+    }
+
+    const lineItem: QuotationLineItem = {
+      id: makeId(),
+      optionId: "", // Indicates custom item
+      label,
+      category: "custom",
+      quantity,
+      unitPrice,
+      totalPrice: quantity * unitPrice,
+      priceManuallyEdited: true,
+    };
+
+    setLineItems((prev) => [...prev, lineItem]);
+    setCustomLabel("");
+    setCustomQuantity("1");
+    setCustomUnitPrice("");
+  };
+
+  const addMiscLineItem = () => {
+    const label = miscLabel.trim();
+    if (!label) return;
+
+    const unitPrice = toNumber(miscPrice);
+    if (unitPrice <= 0) {
+      return;
+    }
+
+    const lineItem: QuotationLineItem = {
+      id: makeId(),
+      optionId: "", // Indicates custom item
+      label,
+      category: "custom",
+      quantity: 1, // Quantity is 1 for miscellaneous items
+      unitPrice,
+      totalPrice: unitPrice,
+      priceManuallyEdited: true,
+    };
+
+    setLineItems((prev) => [...prev, lineItem]);
+    setMiscLabel("");
+    setMiscPrice("");
   };
 
   const removeLineItem = (lineItemId: string) => {
@@ -149,6 +210,11 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
     setCompanyName("");
     setCompanyLogoDataUrl("");
     setLineItems([]);
+    setCustomLabel("");
+    setCustomQuantity("1");
+    setCustomUnitPrice("");
+    setMiscLabel("");
+    setMiscPrice("");
   };
 
   return (
@@ -194,6 +260,7 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
             </div>
           </div>
 
+          {/* Predefined Products Section */}
           <div className="rounded-lg border p-4 space-y-4">
             <h4 className="text-sm font-semibold">Add Products / Options</h4>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
@@ -288,6 +355,72 @@ export function CreateQuotationDialog({ onAdd }: CreateQuotationDialogProps) {
               <div className="rounded-md bg-accent px-4 py-3 text-sm font-semibold">
                 Auto Calculated Total: Rs {quotationTotal.toLocaleString("en-IN")}
               </div>
+            </div>
+          </div>
+
+          {/* Custom Fields Section (with quantity) */}
+          <div className="rounded-lg border p-4 space-y-4">
+            <h4 className="text-sm font-semibold">Add Custom Fields (e.g., Labour Costs with Quantity)</h4>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
+              <div className="md:col-span-4 space-y-2">
+                <Label className="text-xs">Custom Label</Label>
+                <Input
+                  value={customLabel}
+                  onChange={(e) => setCustomLabel(e.target.value)}
+                  placeholder="Enter custom label (e.g., Labour Cost)"
+                />
+              </div>
+              <div className="md:col-span-3 space-y-2">
+                <Label className="text-xs">Quantity</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={customQuantity}
+                  onChange={(e) => setCustomQuantity(e.target.value)}
+                  placeholder="Enter quantity"
+                />
+              </div>
+              <div className="md:col-span-3 space-y-2">
+                <Label className="text-xs">Unit Price</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={customUnitPrice}
+                  onChange={(e) => setCustomUnitPrice(e.target.value)}
+                  placeholder="Enter unit price"
+                />
+              </div>
+              <Button type="button" className="md:col-span-2" onClick={addCustomLineItem}>
+                Add Custom Field
+              </Button>
+            </div>
+          </div>
+
+          {/* Miscellaneous Costs Section (without quantity) */}
+          <div className="rounded-lg border p-4 space-y-4">
+            <h4 className="text-sm font-semibold">Add Miscellaneous Costs (e.g., Labour Costs - Fixed Amount)</h4>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
+              <div className="md:col-span-6 space-y-2">
+                <Label className="text-xs">Cost Label</Label>
+                <Input
+                  value={miscLabel}
+                  onChange={(e) => setMiscLabel(e.target.value)}
+                  placeholder="Enter cost label (e.g., Labour Cost, Transportation, etc.)"
+                />
+              </div>
+              <div className="md:col-span-4 space-y-2">
+                <Label className="text-xs">Amount</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={miscPrice}
+                  onChange={(e) => setMiscPrice(e.target.value)}
+                  placeholder="Enter amount"
+                />
+              </div>
+              <Button type="button" className="md:col-span-2" onClick={addMiscLineItem}>
+                Add Miscellaneous Cost
+              </Button>
             </div>
           </div>
 
