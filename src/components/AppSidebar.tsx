@@ -39,7 +39,7 @@ const getNavGroups = (role: Role) => [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
       { title: "Projects", url: "/projects", icon: FolderKanban },
       { title: "Action", url: "/new-action", icon: PlusCircle },
-      { title: "Invoices", url: "/quotations", icon: FileText },
+      { title: "Quotations", url: "/quotations", icon: FileText },
       { title: "Accounts", url: "/billing", icon: Wallet },
     ],
   },
