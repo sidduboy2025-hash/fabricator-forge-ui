@@ -1,0 +1,44 @@
+
+Day 2 (23/3/26) : 
+
+Quotation should be in pdf and a shareable public link 
+Sliding animations in quotation for good looks but image in pdf also 
+
+Quotation module ( fabricator ) : should be shown to distributor also 
+All standard options 
+In the quotation pdf : company logo , our logo ( footer ) {
+If our brand only then our logo or else their own logo 
+Fabricator details and names logos 
+}
+
+Pdf itself should be editable 
+In this quotation images , drawings 
+Editable anytime - multi edits required - track versions - quotation details same like gemini preview , 
+
+Either percent edit or amount set 
+Check gemini preview settings for input for quotation
+
+Prices will be defined before hand and everytime the user selects just the items and price should be auto calculated 
+
+Overheads - labour cost configurable 
+
+
+
+
+
+
+
+Fabricator 
+Calculations logic 
+Some materials with gst , some materials with non gst 
+
+Net landing cost excluding gst without bill 
+
+With bill 
+
+
+If end customer refuse to take gst bill -> 
+Considering including gst which are compulsory purchase with gst + other material cost without gst + labour + other costs + profit ( margin ) - excess no gst charged 
+If end customer ask for gst invoice : 
+
+Considering excluding gst which are compulsory purchase with gst + other material cost without gst + labour + other costs + profit + gst charged 

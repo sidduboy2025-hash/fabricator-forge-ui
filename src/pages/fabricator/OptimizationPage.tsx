@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Trash2, Settings2, Calculator, Save, Layers, ScissorsLineDashed } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { getOptimizerPricingConfig } from "@/lib/optimizerPricingConfig";
 
 // Helper function to format window name for Purchase Order
 const formatWindowNameForPO = (name: string) => {
@@ -64,48 +65,30 @@ export default function OptimizationPage() {
   const { toast } = useToast();
   const [showSettings, setShowSettings] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [pricingConfig] = useState(() => getOptimizerPricingConfig());
 
   // Constants
-  const trackOptionsMap: Record<string, { label: string; value: number; fullSeriesName: string }[]> = {
-    "Slider Eco Window": [
-      { label: "2 Tracks", value: 2, fullSeriesName: "Eco 2 Track" },
-      { label: "2.5 Tracks", value: 2.5, fullSeriesName: "Eco 2.5 Track" }
-    ],
-    "Slider Standard Window": [
-      { label: "2 Tracks", value: 2, fullSeriesName: "Slider Standard Window 2 Track" },
-      { label: "2.5 Tracks", value: 2.5, fullSeriesName: "Slider Standard Window 2.5 Track" },
-      { label: "3 Tracks", value: 3, fullSeriesName: "Slider Standard Window 3 Track" }
-    ],
-    "Slider Premium Window": [
-      { label: "2 Tracks", value: 2, fullSeriesName: "Slider Premium Window 2 Track" },
-      { label: "3 Tracks", value: 3, fullSeriesName: "Slider Premium Window 3 Track" }
-    ]
-  };
+  const trackOptionsMap = pricingConfig.trackOptionsMap;
+  const initialTopLevelSeries = Object.keys(trackOptionsMap)[0] || "Slider Eco Window";
+  const initialTrackOption = trackOptionsMap[initialTopLevelSeries]?.[0];
 
   // State
   const [windows, setWindows] = useState([
-    { id: 1, name: "Window 1", width: "" as number | "", height: "" as number | "", numTracks: 2, quantity: 1, topLevelSeries: "Slider Eco Window", selectedFullSeriesName: "Eco 2 Track", glassType: "5mm Clear Glass", hardwareType: "Standard" }
+    {
+      id: 1,
+      name: "Window 1",
+      width: "" as number | "",
+      height: "" as number | "",
+      numTracks: initialTrackOption?.value || 2,
+      quantity: 1,
+      topLevelSeries: initialTopLevelSeries,
+      selectedFullSeriesName: initialTrackOption?.fullSeriesName || "",
+      glassType: "5mm Clear Glass",
+      hardwareType: Object.keys(pricingConfig.appSettings.hardwareSettings)[0] || "Standard",
+    }
   ]);
 
-  const [appSettings, setAppSettings] = useState({
-    kerfThickness: 15,
-    weldingThickness: 2.5,
-    edgeTrimThickness: 10,
-    useCommonStockLength: false,
-    commonStockLength: 5900,
-    stockLengths: { "frame 55 outer": 5900, "sash 57x34": 5900, "interlock 80": 5900, "beed 80": 5900, "screen 50x24": 5900 } as Record<string, number>,
-    profileDimensions: { "frame 55 outer": { height: 50 }, "sash 57x34": { height: 57 } } as Record<string, any>,
-    hardwareSettings: { "Standard": { cost: 500 }, "Premium": { cost: 1200 } } as Record<string, any>,
-    seriesDeductions: {
-      "Eco 2 Track": { frameProfile: "frame 55 outer", sashProfile: "sash 57x34", interlockProfile: "interlock 80", beadingProfile: "beed 80", screenProfile: "screen 50x24", glassSash: { widthDeduction: 10, sashHeightAdjustment: 10 }, beading: { heightDeduction: 20, widthDeduction: 20 }, interlockHeightDeduction: 80 },
-      "Eco 2.5 Track": { frameProfile: "frame 80 outer", sashProfile: "sash 57x34", interlockProfile: "interlock 80", beadingProfile: "beed 80", screenProfile: "screen 50x24", glassSash: { widthDeduction: 10, sashHeightAdjustment: 10 }, screenSash: { heightDeduction: 100, widthDeduction: 15 }, beading: { heightDeduction: 20, widthDeduction: 20 }, interlockHeightDeduction: 100 },
-      "Slider Standard Window 2 Track": { frameProfile: "frame 55 outer", sashProfile: "sash 57x34", interlockProfile: "interlock 80", beadingProfile: "beed 80", screenProfile: "screen 50x24", glassSash: { widthDeduction: 10, sashHeightAdjustment: 10 }, beading: { heightDeduction: 20, widthDeduction: 20 }, interlockHeightDeduction: 80 },
-      "Slider Standard Window 2.5 Track": { frameProfile: "frame 80 outer", sashProfile: "sash 57x34", interlockProfile: "interlock 80", beadingProfile: "beed 80", screenProfile: "screen 50x24", glassSash: { widthDeduction: 10, sashHeightAdjustment: 10 }, screenSash: { heightDeduction: 100, widthDeduction: 15 }, beading: { heightDeduction: 20, widthDeduction: 20 }, interlockHeightDeduction: 100 },
-      "Slider Standard Window 3 Track": { frameProfile: "frame 80 outer", sashProfile: "sash 57x34", interlockProfile: "interlock 80", beadingProfile: "beed 80", screenProfile: "screen 50x24", glassSash: { widthDeduction: 10, sashHeightAdjustment: 10 }, beading: { heightDeduction: 20, widthDeduction: 20 }, interlockHeightDeduction: 100 },
-      "Slider Premium Window 2 Track": { frameProfile: "frame 55 outer", sashProfile: "sash 57x34", interlockProfile: "interlock 80", beadingProfile: "beed 80", screenProfile: "screen 50x24", glassSash: { widthDeduction: 10, sashHeightAdjustment: 10 }, beading: { heightDeduction: 20, widthDeduction: 20 }, interlockHeightDeduction: 80 },
-      "Slider Premium Window 3 Track": { frameProfile: "frame 80 outer", sashProfile: "sash 57x34", interlockProfile: "interlock 80", beadingProfile: "beed 80", screenProfile: "screen 50x24", glassSash: { widthDeduction: 10, sashHeightAdjustment: 10 }, beading: { heightDeduction: 20, widthDeduction: 20 }, interlockHeightDeduction: 100 },
-    } as Record<string, any>
-  });
+  const [appSettings, setAppSettings] = useState(() => JSON.parse(JSON.stringify(pricingConfig.appSettings)));
 
   const [combinedCuttingPlan, setCombinedCuttingPlan] = useState<Record<string, any[]>>({});
   const [totalAreaSqMeters, setTotalAreaSqMeters] = useState(0);
@@ -167,8 +150,10 @@ export default function OptimizationPage() {
 
       const sashes = (w.numTracks >= 3) ? 3 : 2;
       const fH = appSettings.profileDimensions[deds.frameProfile]?.height || 50;
-      const sH = height - (fH * 2) + (deds.glassSash?.sashHeightAdjustment || 0);
-      const sW = (width / sashes) - (deds.glassSash?.widthDeduction || 0);
+      const sashHeightAdjustment = deds.glassSash?.sashHeightAdjustment ?? deds.sashLengthDeduction ?? 0;
+      const sashWidthDeduction = deds.glassSash?.widthDeduction ?? deds.sashWidthOverlap ?? 0;
+      const sH = height - (fH * 2) + sashHeightAdjustment;
+      const sW = (width / sashes) - sashWidthDeduction;
 
       for (let i = 0; i < sashes; i++) {
         parts.push({ type: "Sash V", len: sH, prof: deds.sashProfile, count: 2 });
@@ -258,8 +243,9 @@ export default function OptimizationPage() {
                     <Select value={w.hardwareType} onValueChange={val => updateWindow(w.id, "hardwareType", val)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Standard">Standard</SelectItem>
-                        <SelectItem value="Premium">Premium</SelectItem>
+                        {Object.keys(appSettings.hardwareSettings).map((hardwareType) => (
+                          <SelectItem key={hardwareType} value={hardwareType}>{hardwareType}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -398,7 +384,7 @@ export default function OptimizationPage() {
               <Input id="welding" type="number" value={appSettings.weldingThickness} onChange={e => updateSetting("weldingThickness", e.target.value)} className="col-span-1" />
             </div>
             <div className="bg-warning/20 border border-warning/30 p-4 rounded-xl mt-2 text-warning font-medium text-xs">
-              System variables including dimension constraints and margin allocations are sourced actively under the hood based on your tenant configuration.
+              Full pricing and optimization variables can be configured in Profile - Configure Pricing.
             </div>
           </div>
           <Button onClick={() => setShowSettings(false)} className="w-full">

@@ -14,6 +14,7 @@ import { Bell, ChevronDown, Globe, Search, User, Wallet } from "lucide-react";
 import { CurrencyDisplay } from "@/components/CurrencyDisplay";
 import { walletBalance } from "@/data/wallet";
 import { useRole, Role } from "@/contexts/RoleContext";
+import { useNavigate } from "react-router-dom";
 
 const orgs = [
   { id: "1", name: "Acme Fabricators", role: "Owner" },
@@ -30,6 +31,7 @@ const notifications = [
 ];
 
 export function AppHeader() {
+  const navigate = useNavigate();
   const [currentOrg, setCurrentOrg] = useState(orgs[0]);
   const [currentLang, setCurrentLang] = useState("EN");
   const [isOffline] = useState(false);
@@ -160,8 +162,8 @@ export function AppHeader() {
                 <div className="text-2xs text-muted-foreground">ravi@acmefab.com</div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-xs">Profile</DropdownMenuItem>
-              <DropdownMenuItem className="text-xs">Preferences</DropdownMenuItem>
+              <DropdownMenuItem className="text-xs" onClick={() => navigate("/profile")}>Profile</DropdownMenuItem>
+              <DropdownMenuItem className="text-xs" onClick={() => navigate("/profile?tab=configure-pricing")}>Configure Pricing</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-xs text-destructive">Log out</DropdownMenuItem>
             </DropdownMenuContent>

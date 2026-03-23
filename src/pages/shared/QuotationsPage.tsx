@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { QuotationList, Quotation } from "@/components/quotations/QuotationList";
+import { QuotationList } from "@/components/quotations/QuotationList";
 import { CreateQuotationDialog } from "@/components/quotations/CreateQuotationDialog";
+import { QuotationRecord } from "@/types/quotation";
+import { downloadQuotationPdf } from "@/lib/quotationPdf";
+import { toast } from "sonner";
 
-const initialQuotations: Quotation[] = [
+const STORAGE_KEY = "quotationHistory.v1";
+
+const initialQuotations: QuotationRecord[] = [
   {
     id: "QUO-2026-041",
     client: "Vertex Infra Pvt Ltd",
@@ -12,6 +17,8 @@ const initialQuotations: Quotation[] = [
     amount: 1250000,
     status: "sent",
     itemsCount: 14,
+    company: { name: "Acme Fabricators" },
+    lineItems: [],
   },
   {
     id: "QUO-2026-042",
@@ -21,6 +28,8 @@ const initialQuotations: Quotation[] = [
     amount: 450000,
     status: "draft",
     itemsCount: 5,
+    company: { name: "Acme Fabricators" },
+    lineItems: [],
   },
   {
     id: "QUO-2026-038",
@@ -30,6 +39,8 @@ const initialQuotations: Quotation[] = [
     amount: 3200000,
     status: "accepted",
     itemsCount: 42,
+    company: { name: "Acme Fabricators" },
+    lineItems: [],
   },
   {
     id: "QUO-2026-035",
@@ -39,14 +50,55 @@ const initialQuotations: Quotation[] = [
     amount: 85000,
     status: "rejected",
     itemsCount: 3,
+    company: { name: "Acme Fabricators" },
+    lineItems: [],
   },
 ];
 
 export default function QuotationsPage() {
-  const [quotations, setQuotations] = useState<Quotation[]>(initialQuotations);
+  const [quotations, setQuotations] = useState<QuotationRecord[]>(() => {
+    if (typeof window === "undefined") return initialQuotations;
 
-  const handleCreate = (newQuote: Quotation) => {
-    setQuotations([newQuote, ...quotations]);
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return initialQuotations;
+
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : initialQuotations;
+    } catch {
+      return initialQuotations;
+    }
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations));
+  }, [quotations]);
+
+  const handleCreate = (newQuote: QuotationRecord) => {
+    setQuotations((prev) => [newQuote, ...prev]);
+  };
+
+  const handleDownload = (quotation: QuotationRecord) => {
+    downloadQuotationPdf(quotation);
+  };
+
+  const handleDuplicate = (quotation: QuotationRecord) => {
+    const duplicate: QuotationRecord = {
+      ...quotation,
+      id: `QUO-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)
+        .toString()
+        .padStart(4, "0")}`,
+      date: new Date().toISOString().split("T")[0],
+      status: "draft",
+    };
+
+    setQuotations((prev) => [duplicate, ...prev]);
+    toast.success(`Quotation duplicated as ${duplicate.id}`);
+  };
+
+  const handleView = (quotation: QuotationRecord) => {
+    toast.info(`${quotation.id} | ${quotation.client} | Rs ${quotation.amount.toLocaleString("en-IN")}`);
   };
 
   return (
@@ -84,7 +136,7 @@ export default function QuotationsPage() {
         </div>
       </div>
       
-      <QuotationList data={quotations} />
+      <QuotationList data={quotations} onDownload={handleDownload} onDuplicate={handleDuplicate} onView={handleView} />
     </div>
   );
 }

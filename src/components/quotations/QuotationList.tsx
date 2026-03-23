@@ -11,27 +11,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-
-export interface Quotation {
-  id: string;
-  client: string;
-  date: string;
-  validUntil: string;
-  amount: number;
-  status: "draft" | "sent" | "accepted" | "rejected";
-  itemsCount: number;
-}
+import { QuotationRecord } from "@/types/quotation";
 
 interface QuotationListProps {
-  data: Quotation[];
+  data: QuotationRecord[];
+  onDownload: (quotation: QuotationRecord) => void;
+  onDuplicate: (quotation: QuotationRecord) => void;
+  onView: (quotation: QuotationRecord) => void;
 }
 
-export function QuotationList({ data }: QuotationListProps) {
+export function QuotationList({ data, onDownload, onDuplicate, onView }: QuotationListProps) {
   const handleAction = (action: string, id: string) => {
     toast.success(`${action} quotation ${id}`);
   };
 
-  const columns: Column<Quotation>[] = [
+  const columns: Column<QuotationRecord>[] = [
     { key: "id", label: "Quote ID", sortable: true, className: "font-mono text-xs w-24 text-primary" },
     { key: "client", label: "Client", sortable: true, render: (r) => <span className="font-medium">{r.client}</span> },
     { key: "date", label: "Date", sortable: true, className: "text-muted-foreground" },
@@ -49,7 +43,7 @@ export function QuotationList({ data }: QuotationListProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleAction("View", r.id)} className="text-xs">
+              <DropdownMenuItem onClick={() => onView(r)} className="text-xs">
                 <Eye className="h-4 w-4 mr-2" /> View Details
               </DropdownMenuItem>
               {r.status === "draft" && (
@@ -57,11 +51,11 @@ export function QuotationList({ data }: QuotationListProps) {
                   <Send className="h-4 w-4 mr-2" /> Send to Client
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => handleAction("Download PDF for", r.id)} className="text-xs">
+              <DropdownMenuItem onClick={() => onDownload(r)} className="text-xs">
                 <Download className="h-4 w-4 mr-2" /> Download PDF
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleAction("Duplicated", r.id)} className="text-xs">
+              <DropdownMenuItem onClick={() => onDuplicate(r)} className="text-xs">
                 <Copy className="h-4 w-4 mr-2" /> Duplicate
               </DropdownMenuItem>
             </DropdownMenuContent>

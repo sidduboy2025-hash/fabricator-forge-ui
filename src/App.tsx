@@ -17,6 +17,7 @@ import OcrPage from "./pages/shared/OcrPage";
 import ReportsPage from "./pages/shared/ReportsPage";
 import QuotationsPage from "./pages/shared/QuotationsPage";
 import FabricatorsPage from "./pages/shared/FabricatorsPage";
+import ProfilePage from "./pages/shared/ProfilePage";
 import NotFound from "./pages/shared/NotFound";
 
 import AdminPage from "./pages/admin/AdminPage";
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/supply-chain" element={<SupplyChainPage />} />
             <Route path="/ocr" element={<OcrPage />} />
             <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/batch" element={<BatchPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/optimization" element={<OptimizationPage />} />
